@@ -322,3 +322,7 @@ div {
 .custom-hover:hover {
   transform: scale(1.05);
 }
+
+.active {
+  color: #68bb7d !important;
+}

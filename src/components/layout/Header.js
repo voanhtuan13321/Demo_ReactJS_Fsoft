@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import { CartContext } from '../context/CartContext';
 import { text, link } from '../../common/properties';
@@ -58,12 +58,13 @@ export default function Header() {
 
       <nav className='navbar navbar-expand-lg navbar-light shadow'>
         <div className='container d-flex justify-content-between align-items-center'>
-          <Link
+          <NavLink
+            activeClassName='active'
             className='navbar-brand text-success logo h1 align-self-center'
             to={path.home}
           >
             {text.logo}
-          </Link>
+          </NavLink>
 
           <div
             className='align-self-center collapse navbar-collapse flex-fill d-lg-flex justify-content-lg-between'
@@ -72,42 +73,47 @@ export default function Header() {
             <div className='flex-fill'>
               <ul className='nav navbar-nav d-flex justify-content-between mx-lg-auto'>
                 <li className='nav-item'>
-                  <Link
+                  <NavLink
+                    activeClassName='active'
                     to='/'
                     className='nav-link'
                   >
                     Home
-                  </Link>
+                  </NavLink>
                 </li>
                 <li className='nav-item'>
-                  <Link
+                  <NavLink
+                    activeClassName='active'
                     className='nav-link'
                     to={path.product}
                   >
                     Products
-                  </Link>
+                  </NavLink>
                 </li>
                 <li className='nav-item'>
-                  <Link
+                  <NavLink
+                    activeClassName='active'
                     to='/about'
                     className='nav-link'
                   >
                     About Us
-                  </Link>
+                  </NavLink>
                 </li>
                 <li className='nav-item'>
-                  <Link
+                  <NavLink
+                    activeClassName='active'
                     className='nav-link'
                     to={path.contact}
                   >
                     Contact
-                  </Link>
+                  </NavLink>
                 </li>
               </ul>
             </div>
 
             <div className='navbar align-self-center d-flex'>
-              <Link
+              <NavLink
+                activeClassName='active'
                 className='nav-icon position-relative text-decoration-none'
                 to={path.shoppingCart}
               >
@@ -115,7 +121,7 @@ export default function Header() {
                 <span className='position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark'>
                   {carts.length}
                 </span>
-              </Link>
+              </NavLink>
             </div>
           </div>
         </div>
