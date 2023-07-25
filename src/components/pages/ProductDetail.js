@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
 import { CartContext } from '../context/CartContext';
@@ -10,7 +10,6 @@ import { path } from '../../router/router';
 export default function ProductDetail() {
   const [book, setBook] = useState({});
   const [carts, cartsDispatch] = useContext(CartContext);
-  const locat = useLocation();
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -26,7 +25,7 @@ export default function ProductDetail() {
       setBook(book);
     }
     console.log(carts);
-  }, [locat.search, carts, id]);
+  }, [carts, id]);
 
   // handle click add cart
   const addCart = (book) => {
