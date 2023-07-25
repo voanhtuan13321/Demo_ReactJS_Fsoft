@@ -65,13 +65,13 @@ export default function Product() {
                     to={`/product-detail/${sach.id}`}
                     className='btn btn-outline-primary btn-sm'
                   >
-                    Chi tiết sản phẩm
+                    <i class='fa-solid fa-eye'></i> Chi tiết sản phẩm
                   </Link>
                   <button
-                    className='btn btn-outline-success btn-sm mt-3'
+                    className='btn btn-outline-success mt-3'
                     onClick={() => handleAddCart(sach)}
                   >
-                    Thêm vào giỏ hàng
+                    <i className='me-1 fa fa-shopping-basket'></i> Thêm vào giỏ hàng
                   </button>
                 </div>
               </div>

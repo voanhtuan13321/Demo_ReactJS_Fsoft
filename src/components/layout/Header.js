@@ -111,7 +111,7 @@ export default function Header() {
                 className='nav-icon position-relative text-decoration-none'
                 to={path.shoppingCart}
               >
-                <i className='fa fa-fw fa-cart-arrow-down text-dark mr-1'></i>
+                <i className='fa fa-fw fa-cart-arrow-down text-success mr-1'></i>
                 <span className='position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark'>
                   {carts.length}
                 </span>
