@@ -2,13 +2,14 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import { CartContext } from '../context/CartContext';
-import dataSach from '../../common/data-sach.json';
-import { formatPrice } from '../../common/properties';
-import { path } from '../../router/router';
+import { CartContext } from '~/components/user/context/CartContext';
+import dataSach from '~/common/data-sach.json';
+import { formatPrice } from '~/common/properties';
+import { path } from '~/router/router';
 
 export default function ProductDetail() {
   const [book, setBook] = useState({});
+  const [soLuong, setSoLuong] = useState(1);
   const [carts, cartsDispatch] = useContext(CartContext);
   const navigate = useNavigate();
   const { id } = useParams();
@@ -33,6 +34,7 @@ export default function ProductDetail() {
     const action = {
       type: 'ADD',
       data: book,
+      soLuong: soLuong,
     };
     cartsDispatch(action);
 
@@ -73,8 +75,17 @@ export default function ProductDetail() {
                 <dd className='col-9'>{book.author}</dd>
                 <dt className='col-3'>Giá:</dt>
                 <dd className='col-9'>{formatPrice(book.price)}</dd>
+                <dt className='col-3'>Số lượng:</dt>
+                <dd className='col-9'>
+                  <input
+                    type='number'
+                    value={soLuong}
+                    onChange={(e) => setSoLuong(e.target.value)}
+                  />
+                </dd>
               </div>
               <hr />
+
               <button
                 className='btn btn-success shadow-0 mt-5'
                 onClick={() => addCart(book)}

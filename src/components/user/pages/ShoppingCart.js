@@ -2,8 +2,8 @@ import React, { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import { CartContext } from '../context/CartContext';
-import { formatPrice } from '../../common/properties';
+import { CartContext } from '~/components/user/context/CartContext';
+import { formatPrice } from '~/common/properties';
 
 export default function ShoppingCart() {
   const [carts, cartsDispatch] = useContext(CartContext);
@@ -66,11 +66,11 @@ export default function ShoppingCart() {
                   value={cart.quantity}
                   onChange={(event) => {}}
                   className='form-control form-control-sm text-center'
-                  style={{ width: '50px' }}
+                  style={{ width: '100px' }}
                 />
                 <button
                   className='btn btn-link px-2'
-                  onClick={() => cartsDispatch({ type: 'INCREASE', data: cart })}
+                  onClick={() => handleClickAdd(cart)}
                 >
                   <i className='fas fa-plus'></i>
                 </button>
@@ -104,6 +104,12 @@ export default function ShoppingCart() {
         </div>
       );
     });
+  };
+
+  // handle click +
+  const handleClickAdd = (cart) => {
+    // const book = dataSach.find(sach => sach.id === cart.id ==)
+    cartsDispatch({ type: 'INCREASE', data: cart });
   };
 
   // handle remove cart

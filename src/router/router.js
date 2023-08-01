@@ -1,40 +1,37 @@
-import About from '../components/pages/About';
-import Contact from '../components/pages/Contact';
-import Home from '../components/pages/Home';
-import Product from '../components/pages/Product';
-import ProductDetail from '../components/pages/ProductDetail';
-import ShoppingCart from '../components/pages/ShoppingCart';
-import PageNotFound from '../components/pages/PageNotFound';
+import About from '~/components/user/pages/About';
+import Contact from '~/components/user/pages/Contact';
+import Home from '~/components/user/pages/Home';
+import ProductDetail from '~/components/user/pages/ProductDetail';
+import ShoppingCart from '~/components/user/pages/ShoppingCart';
+import PageNotFound from '~/components/user/pages/PageNotFound';
+import Login from '~/components/user/pages/Login';
+import Register from '~/components/user/pages/Register';
 
 const path = {
-  home: '/home',
-  about: '/about',
-  product: '/product',
-  contact: '/contact',
-  productDetail: '/product-detail/:id',
-  shoppingCart: '/shopping-cart',
+  home: '',
+  about: 'about',
+  contact: 'contact',
+  productDetail: 'product-detail/:id',
+  shoppingCart: 'shopping-cart',
+  login: 'login',
+  register: 'register',
 };
 
 const routes = [
   {
-    path: '/',
-    element: <Home />,
-  },
-  {
     path: path.home,
     element: <Home />,
-  },
-  {
-    path: path.product,
-    element: <Product />,
+    text: 'Home',
   },
   {
     path: path.about,
     element: <About />,
+    text: 'About Us',
   },
   {
     path: path.contact,
     element: <Contact />,
+    test: 'Contact Us',
   },
   {
     path: path.productDetail,
@@ -43,6 +40,14 @@ const routes = [
   {
     path: path.shoppingCart,
     element: <ShoppingCart />,
+  },
+  {
+    path: path.login,
+    element: <Login />,
+  },
+  {
+    path: path.register,
+    element: <Register />,
   },
   {
     path: '*',

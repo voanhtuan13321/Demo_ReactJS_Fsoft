@@ -1,29 +1,23 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import { CartContext } from '../context/CartContext';
-import dataSach from '../../common/data-sach.json';
-import dataDanhMuc from '../../common/data-danhmuc.json';
-import { formatPrice } from '../../common/properties';
-import { path } from '../../router/router';
+import dataDanhMuc from '~/common/data-danhmuc.json';
+import dataSach from '~/common/data-sach.json';
+import { CartContext } from '~/components/user/context/CartContext';
+import { path } from '~/router/router';
+import { formatPrice } from '~/common/properties';
 
-export default function Product() {
+export default function Home() {
   const [idDanhMuc, setIdDanhMuc] = useState(undefined);
   const [carts, cartsDispatch] = useContext(CartContext);
-  const locat = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    window.document.title = 'Product';
+    window.document.title = 'Home';
     window.scrollTo(0, 0);
-
-    // get id danh muc in parameters
-    const params = new URLSearchParams(locat.search);
-    const id = params.get('idDanhMuc');
-    setIdDanhMuc(id === null ? undefined : id);
     console.log(carts);
-  }, [locat.search, carts]);
+  }, [carts]);
 
   // render book
   const renderBook = (id) => {
@@ -125,23 +119,34 @@ export default function Product() {
   };
 
   return (
-    <section className='bg-light'>
-      <div className='container py-5'>
-        <div className='row text-center py-3'>
-          <div className='col-lg-6 m-auto'>
-            <h1 className='h1'>Danh sách các sản phẩm</h1>
-            <select
-              className='form-select mx-auto'
-              style={{ width: '300px' }}
-              onChange={handleSelect}
-              value={idDanhMuc} // Giá trị idDanhMuc hiện tại để chọn mặc định
-            >
-              {renderOptions()}
-            </select>
+    <>
+      <section className='bg-success py-5'>
+        <div className='align-items-center py-5'>
+          <div className='text-white py-5'>
+            <p className='text-center h2 py-4'>Welcome to the Book-Shop</p>
+            <h1 className='text-center h1 py-4'>IT'S NICE TO MEET YOU</h1>
           </div>
         </div>
-        <div className='row'>{renderBook(idDanhMuc)}</div>
-      </div>
-    </section>
+      </section>
+
+      <section className='bg-light'>
+        <div className='container py-5'>
+          <div className='row text-center py-3'>
+            <div className='col-lg-6 m-auto'>
+              <h1 className='h1'>Danh sách các sản phẩm</h1>
+              <select
+                className='form-select mx-auto my-5'
+                style={{ width: '300px' }}
+                onChange={handleSelect}
+                value={idDanhMuc} // Giá trị idDanhMuc hiện tại để chọn mặc định
+              >
+                {renderOptions()}
+              </select>
+            </div>
+          </div>
+          <div className='row'>{renderBook(idDanhMuc)}</div>
+        </div>
+      </section>
+    </>
   );
 }

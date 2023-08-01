@@ -13,7 +13,7 @@ const cartReducer = (state, action) => {
 
       if (cartIndex === -1) {
         // don't have in cart, add new
-        return [...state, { ...action.data, quantity: 1 }];
+        return [...state, { ...action.data, quantity: action.soLuong }];
       } else {
         // have in cart, update quantity
         const updatedState = [...state];

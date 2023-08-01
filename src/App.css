@@ -326,3 +326,30 @@ div {
 .active {
   color: #68bb7d !important;
 }
+
+/* css login */
+.box-account {
+  position: absolute;
+  top: 40px;
+  right: -30px;
+  background-color: #eee;
+  border-radius: 5px;
+  list-style: none;
+  padding: 10px;
+  margin: 0;
+  display: none;
+}
+
+.box-account::after {
+  content: '';
+  background-color: transparent;
+  height: 20px;
+  width: 100%;
+  position: absolute;
+  top: -18px;
+  right: 0;
+}
+
+.btn-account:hover .box-account {
+  display: block !important;
+}

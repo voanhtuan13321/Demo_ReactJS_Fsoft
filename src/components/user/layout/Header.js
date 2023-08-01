@@ -1,15 +1,15 @@
 import React, { useContext } from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-import { CartContext } from '../context/CartContext';
-import { text, link } from '../../common/properties';
-import { path } from '../../router/router';
+import { CartContext } from '~/components/user/context/CartContext';
+import { text, link } from '~/common/properties';
+import { path } from '~/router/router';
 
 export default function Header() {
   const [carts] = useContext(CartContext);
 
   return (
-    <header>
+    <header style={{ position: 'relative' }}>
       <nav
         className='navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block'
         id='templatemo_nav_top'
@@ -33,6 +33,18 @@ export default function Header() {
               </a>
             </div>
             <div>
+              <Link
+                to={path.login}
+                className='text-light mx-1 text-decoration-none'
+              >
+                Login
+              </Link>
+              <Link
+                to={path.register}
+                className='text-light mx-1 text-decoration-none'
+              >
+                Register
+              </Link>
               <a
                 className='text-light'
                 href={link.facebook}
@@ -58,13 +70,12 @@ export default function Header() {
 
       <nav className='navbar navbar-expand-lg navbar-light shadow'>
         <div className='container d-flex justify-content-between align-items-center'>
-          <NavLink
-            activeClassName='active'
+          <Link
             className='navbar-brand text-success logo h1 align-self-center'
             to={path.home}
           >
             {text.logo}
-          </NavLink>
+          </Link>
 
           <div
             className='align-self-center collapse navbar-collapse flex-fill d-lg-flex justify-content-lg-between'
@@ -73,55 +84,57 @@ export default function Header() {
             <div className='flex-fill'>
               <ul className='nav navbar-nav d-flex justify-content-between mx-lg-auto'>
                 <li className='nav-item'>
-                  <NavLink
-                    activeClassName='active'
-                    to='/'
+                  <Link
+                    to={path.home}
                     className='nav-link'
                   >
                     Home
-                  </NavLink>
+                  </Link>
                 </li>
                 <li className='nav-item'>
-                  <NavLink
-                    activeClassName='active'
-                    className='nav-link'
-                    to={path.product}
-                  >
-                    Products
-                  </NavLink>
-                </li>
-                <li className='nav-item'>
-                  <NavLink
-                    activeClassName='active'
-                    to='/about'
+                  <Link
+                    to={path.about}
                     className='nav-link'
                   >
                     About Us
-                  </NavLink>
+                  </Link>
                 </li>
                 <li className='nav-item'>
-                  <NavLink
-                    activeClassName='active'
+                  <Link
                     className='nav-link'
                     to={path.contact}
                   >
                     Contact
-                  </NavLink>
+                  </Link>
                 </li>
               </ul>
             </div>
 
             <div className='navbar align-self-center d-flex'>
-              <NavLink
-                activeClassName='active'
+              <Link
                 className='nav-icon position-relative text-decoration-none'
                 to={path.shoppingCart}
               >
-                <i className='fa fa-fw fa-cart-arrow-down text-success mr-1'></i>
+                <i className='fa fa-fw fa-cart-arrow-down text-dark mr-1'></i>
                 <span className='position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark'>
                   {carts.length}
                 </span>
-              </NavLink>
+              </Link>
+
+              <button
+                className='nav-icon position-relative text-decoration-none btn-account'
+                style={{ border: 'none', backgroundColor: 'transparent' }}
+              >
+                <i className='fa fa-fw fa-user text-dark mr-3'></i>
+                <ul className='shadow box-account'>
+                  <li>
+                    <Link to='/'>Login</Link>
+                  </li>
+                  <li>
+                    <Link to='/'>Register</Link>
+                  </li>
+                </ul>
+              </button>
             </div>
           </div>
         </div>

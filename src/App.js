@@ -1,10 +1,10 @@
 import { Route, Routes } from 'react-router-dom';
 import '@sweetalert2/theme-bootstrap-4';
 
-import './App.css';
-import Header from './components/layout/Header';
-import Footer from './components/layout/Footer';
-import { routes } from './router/router';
+import '~/App.css';
+import User from '~/components/user/User';
+import Admin from '~/components/admin/Admin';
+import { routes } from '~/router/router';
 
 function App() {
   // render routes
@@ -23,9 +23,18 @@ function App() {
 
   return (
     <>
-      <Header />
-      <Routes>{renderRoutes()}</Routes>
-      <Footer />
+      <Routes>
+        <Route
+          path='user'
+          element={<User />}
+        >
+          {renderRoutes()}
+        </Route>
+        <Route
+          path='admin'
+          element={<Admin />}
+        />
+      </Routes>
     </>
   );
 }

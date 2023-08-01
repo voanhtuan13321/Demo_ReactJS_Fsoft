@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-import { path } from '../../router/router';
+import { path } from '~/router/router';
 
 export default function PageNotFound() {
   useEffect(() => {
