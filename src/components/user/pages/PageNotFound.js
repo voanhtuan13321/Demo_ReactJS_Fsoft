@@ -10,19 +10,19 @@ export default function PageNotFound() {
   }, []);
 
   return (
-    <div class='d-flex align-items-center justify-content-center py-5 my-5'>
-      <div class='text-center py-5 my-5'>
-        <h1 class='display-1 fw-bold'>404</h1>
-        <p class='fs-3'>
-          <span class='text-danger'>Opps!</span> Page not found.
+    <div className='d-flex align-items-center justify-content-center py-5 my-5'>
+      <div className='text-center py-5 my-5'>
+        <h1 className='display-1 fw-bold'>404</h1>
+        <p className='fs-3'>
+          <span className='text-danger'>Opps!</span> Page not found.
         </p>
-        <p class='lead'>The page you're looking for doesn't exist.</p>
-        <Link
+        <p className='lead'>The page you're looking for doesn't exist.</p>
+        {/* <Link
           to={path.home}
-          class='btn btn-success'
+          className='btn btn-success'
         >
           Go Home
-        </Link>
+        </Link> */}
       </div>
     </div>
   );

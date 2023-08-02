@@ -6,6 +6,8 @@ import ShoppingCart from '~/components/user/pages/ShoppingCart';
 import PageNotFound from '~/components/user/pages/PageNotFound';
 import Login from '~/components/user/pages/Login';
 import Register from '~/components/user/pages/Register';
+import CategoryList from '~/components/admin/pages/CategoryList';
+import BookList from '~/components/admin/pages/BookList';
 
 const path = {
   home: '',
@@ -15,6 +17,11 @@ const path = {
   shoppingCart: 'shopping-cart',
   login: 'login',
   register: 'register',
+};
+
+const adminPath = {
+  categoryList: 'category-list',
+  productsList: 'products',
 };
 
 const routes = [
@@ -55,4 +62,15 @@ const routes = [
   },
 ];
 
-export { path, routes };
+const adminRoutes = [
+  {
+    path: adminPath.categoryList,
+    element: <CategoryList />,
+  },
+  {
+    path: adminPath.productsList,
+    element: <BookList />,
+  },
+];
+
+export { path, routes, adminPath, adminRoutes };

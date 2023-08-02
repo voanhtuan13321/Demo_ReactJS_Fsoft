@@ -2,13 +2,15 @@ import { Route, Routes } from 'react-router-dom';
 import '@sweetalert2/theme-bootstrap-4';
 
 import '~/App.css';
+import '~/sb-admin-2.min.css';
 import User from '~/components/user/User';
+import PageNotFound from '~/components/user/pages/PageNotFound';
 import Admin from '~/components/admin/Admin';
-import { routes } from '~/router/router';
+import { routes, adminRoutes } from '~/router/router';
 
 function App() {
   // render routes
-  const renderRoutes = () => {
+  const renderRoutes = (routes) => {
     return routes.map((route, index) => {
       return (
         <Route
@@ -28,11 +30,17 @@ function App() {
           path='user'
           element={<User />}
         >
-          {renderRoutes()}
+          {renderRoutes(routes)}
         </Route>
         <Route
           path='admin'
           element={<Admin />}
+        >
+          {renderRoutes(adminRoutes)}
+        </Route>
+        <Route
+          path='*'
+          element={<PageNotFound />}
         />
       </Routes>
     </>
