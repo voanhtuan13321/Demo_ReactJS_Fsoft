@@ -7,6 +7,7 @@ const axiosInstent = axios.create({
 const path = {
   categories: '/categories',
   products: '/books',
+  admin: '/admin',
 };
 
 export default axiosInstent;

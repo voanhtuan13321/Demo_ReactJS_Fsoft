@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 import axiosInstent, { path } from '~/config/axiosCustom';
 import BookAdd from '~/components/admin/modal/BookAdd';
 import BookEdit from '~/components/admin/modal/BookEdit';
-import Swal from 'sweetalert2';
+import { role, getIdOnLocalStorage } from '~/common/handleIdOnLocalStorage';
 
 export default function BookList() {
   const [categories, setCategories] = useState([]);
@@ -27,8 +29,15 @@ export default function BookList() {
     price: 0,
     quantity: 0,
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
+    // check login
+    const idAdmin = getIdOnLocalStorage(role.admin);
+    if (!idAdmin) {
+      navigate('/admin/login');
+    }
+
     window.document.title = 'Book List';
     window.scrollTo(0, 0);
 
@@ -43,7 +52,7 @@ export default function BookList() {
       });
 
     callApiGetAllBooks();
-  }, []);
+  }, [navigate]);
 
   // call Api Get All Books
   const callApiGetAllBooks = async () => {

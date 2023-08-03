@@ -6,6 +6,7 @@ import '~/sb-admin-2.min.css';
 import User from '~/components/user/User';
 import PageNotFound from '~/components/user/pages/PageNotFound';
 import Admin from '~/components/admin/Admin';
+import Login from '~/components/admin/pages/Login';
 import { routes, adminRoutes } from '~/router/router';
 
 function App() {
@@ -41,6 +42,10 @@ function App() {
         <Route
           path='*'
           element={<PageNotFound />}
+        />
+        <Route
+          path='admin/login'
+          element={<Login />}
         />
       </Routes>
     </>
