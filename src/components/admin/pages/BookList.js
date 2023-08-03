@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import axiosInstent, { path } from '~/config/axiosCustom';
+import axiosInstent, { pathApi } from '~/config/axiosCustom';
 import BookAdd from '~/components/admin/modal/BookAdd';
 import BookEdit from '~/components/admin/modal/BookEdit';
 import { role, getIdOnLocalStorage } from '~/common/handleIdOnLocalStorage';
@@ -42,7 +42,7 @@ export default function BookList() {
     window.scrollTo(0, 0);
 
     axiosInstent
-      .get(path.categories)
+      .get(pathApi.categories)
       .then((response) => {
         // console.log('category:', response.data);
         setCategories(response.data);
@@ -56,7 +56,7 @@ export default function BookList() {
 
   // call Api Get All Books
   const callApiGetAllBooks = async () => {
-    const response = await axiosInstent.get(path.products);
+    const response = await axiosInstent.get(pathApi.products);
     const dataBook = await response.data;
     // console.log('books:', dataBook);
     setBooks(dataBook);
@@ -98,7 +98,7 @@ export default function BookList() {
     const formDataBook = convertToFormData(inputAddBook);
 
     axiosInstent
-      .post(path.products, formDataBook)
+      .post(pathApi.products, formDataBook)
       .then((response) => {
         // console.log(response);
         Swal.fire({
@@ -137,7 +137,7 @@ export default function BookList() {
     // console.log('test', inputEditBook);
     const formDataBook = convertToFormData(inputEditBook);
     axiosInstent
-      .put(path.products, formDataBook)
+      .put(pathApi.products, formDataBook)
       .then((response) => {
         // console.log(response);
         Swal.fire({
@@ -155,7 +155,7 @@ export default function BookList() {
   const handleDelete = (id) => {
     // console.log(id);
     axiosInstent
-      .delete(`${path.products}/${id}`)
+      .delete(`${pathApi.products}/${id}`)
       .then((response) => {
         // console.log(response);
         Swal.fire({

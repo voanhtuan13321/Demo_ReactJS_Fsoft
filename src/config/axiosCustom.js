@@ -4,11 +4,12 @@ const axiosInstent = axios.create({
   baseURL: 'http://localhost:8080/api',
 });
 
-const path = {
+const pathApi = {
   categories: '/categories',
   products: '/books',
   admin: '/admin',
+  user: '/users',
 };
 
 export default axiosInstent;
-export { path };
+export { pathApi };

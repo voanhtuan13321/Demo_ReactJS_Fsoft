@@ -35,13 +35,13 @@ export default function Home() {
             <div className='card h-100'>
               <Link
                 to={`/product-detail/${sach.id}`}
-                style={{ overflow: 'hidden' }}
+                style={{ overflow: 'hidden', height: '250px' }}
               >
                 <img
                   src={`/img/${sach.image}`}
                   className='card-img-top custom-hover'
                   alt={sach.name}
-                  style={{ height: '300px' }}
+                  style={{ height: '100%' }}
                 />
               </Link>
 
@@ -59,7 +59,7 @@ export default function Home() {
                     to={`/product-detail/${sach.id}`}
                     className='btn btn-outline-primary btn-sm'
                   >
-                    <i class='fa-solid fa-eye'></i> Chi tiết sản phẩm
+                    <i className='fa-solid fa-eye'></i> Chi tiết sản phẩm
                   </Link>
                   <button
                     className='btn btn-outline-success mt-3'

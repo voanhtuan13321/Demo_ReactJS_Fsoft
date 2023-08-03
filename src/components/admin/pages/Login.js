@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import axiosInstent, { path } from '~/config/axiosCustom';
+import axiosInstent, { pathApi } from '~/config/axiosCustom';
 import { role, setIdOnLocalStorage } from '~/common/handleIdOnLocalStorage';
 
 export default function Login() {
@@ -13,7 +13,7 @@ export default function Login() {
   // handle Click Sign In
   const handleClickSignIn = async () => {
     // check exist email
-    const responseCheckEmail = await axiosInstent.get(`${path.admin}/${email}`);
+    const responseCheckEmail = await axiosInstent.get(`${pathApi.admin}/${email}`);
     if (!responseCheckEmail.data) {
       Swal.fire({
         title: 'Email không tồn tại',
@@ -24,7 +24,7 @@ export default function Login() {
 
     // check login
     const dataAdmin = { email, password };
-    const responseCheckLogin = await axiosInstent.post(`${path.admin}/check`, dataAdmin);
+    const responseCheckLogin = await axiosInstent.post(`${pathApi.admin}/check`, dataAdmin);
     const idAdmin = await responseCheckLogin.data;
     if (idAdmin) {
       setIdOnLocalStorage(role.admin, idAdmin);

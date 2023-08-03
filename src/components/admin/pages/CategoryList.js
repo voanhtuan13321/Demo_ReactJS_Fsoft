@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import axiosInstent, { path } from '~/config/axiosCustom';
+import axiosInstent, { pathApi } from '~/config/axiosCustom';
 import CategoryAdd from '~/components/admin/modal/CategoryAdd';
 import CategoryEdit from '~/components/admin/modal/CategoryEdit';
 import { role, getIdOnLocalStorage } from '~/common/handleIdOnLocalStorage';
@@ -32,7 +32,7 @@ export default function CategoryList() {
   // call api get all categories
   const callApiGetAllCategories = async () => {
     try {
-      const response = await axiosInstent.get(path.categories);
+      const response = await axiosInstent.get(pathApi.categories);
       const categories = await response.data;
       // console.log('cate', categories);
       setCategories(categories);
@@ -94,7 +94,7 @@ export default function CategoryList() {
       categoryName: inputAddCategory,
     };
 
-    axiosInstent.post(path.categories, dataCategory).then((response) => {
+    axiosInstent.post(pathApi.categories, dataCategory).then((response) => {
       // console.log(response);
       setInputAddCategory('');
       Swal.fire({
@@ -108,7 +108,7 @@ export default function CategoryList() {
   // handle click on edit button
   const handleShowViewEdit = (id) => {
     axiosInstent
-      .get(`${path.categories}/${id}`)
+      .get(`${pathApi.categories}/${id}`)
       .then((response) => {
         // console.log(response.data);
         const category = response.data;
@@ -131,7 +131,7 @@ export default function CategoryList() {
     };
     // console.log('id', dataCategory);
 
-    axiosInstent.put(path.categories, dataCategory).then((response) => {
+    axiosInstent.put(pathApi.categories, dataCategory).then((response) => {
       // console.log(response);
       Swal.fire({
         title: 'Cập nhật thành công',
@@ -154,7 +154,7 @@ export default function CategoryList() {
     }).then((result) => {
       if (result.isDenied) {
         axiosInstent
-          .delete(`${path.categories}/${id}`)
+          .delete(`${pathApi.categories}/${id}`)
           .then((response) => {
             if (response.data) {
               Swal.fire({
