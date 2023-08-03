@@ -1,12 +1,19 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-import { CartContext } from '~/components/user/context/CartContext';
 import { text, link } from '~/common/properties';
 import { path } from '~/router/router';
+import { AppContext } from '~/context/contextApp';
 
 export default function Header() {
-  const [carts] = useContext(CartContext);
+  const { appContext, appContextDispatch } = useContext(AppContext);
+  const navigate = useNavigate();
+
+  // handl Click Logout
+  const handlClickLogout = () => {
+    appContextDispatch({ type: 'ADD_ID_USER', data: undefined });
+    navigate('../user/login');
+  };
 
   return (
     <header style={{ position: 'relative' }}>
@@ -33,18 +40,22 @@ export default function Header() {
               </a>
             </div>
             <div>
-              <Link
-                to={path.login}
-                className='text-light mx-1 text-decoration-none'
-              >
-                Login
-              </Link>
-              <Link
-                to={path.register}
-                className='text-light mx-1 text-decoration-none'
-              >
-                Register
-              </Link>
+              {!appContext.idUser && (
+                <>
+                  <Link
+                    to={path.login}
+                    className='text-light mx-1 text-decoration-none'
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to={path.register}
+                    className='text-light mx-1 text-decoration-none'
+                  >
+                    Register
+                  </Link>
+                </>
+              )}
               <a
                 className='text-light'
                 href={link.facebook}
@@ -117,24 +128,37 @@ export default function Header() {
               >
                 <i className='fa fa-fw fa-cart-arrow-down text-dark mr-1'></i>
                 <span className='position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark'>
-                  {carts.length}
+                  {0}
                 </span>
               </Link>
-
-              <button
-                className='nav-icon position-relative text-decoration-none btn-account'
-                style={{ border: 'none', backgroundColor: 'transparent' }}
-              >
-                <i className='fa fa-fw fa-user text-dark mr-3'></i>
-                <ul className='shadow box-account'>
-                  <li>
-                    <Link to='/'>Login</Link>
-                  </li>
-                  <li>
-                    <Link to='/'>Register</Link>
-                  </li>
-                </ul>
-              </button>
+              {appContext.idUser && (
+                <>
+                  <button
+                    className='nav-icon position-relative text-decoration-none btn-account'
+                    style={{ border: 'none', backgroundColor: 'transparent' }}
+                  >
+                    <i className='fa fa-fw fa-user text-dark mr-3'></i>
+                    <ul className='shadow box-account'>
+                      <li>
+                        <Link
+                          className='btn'
+                          to='/'
+                        >
+                          Profile
+                        </Link>
+                      </li>
+                      <li>
+                        <button
+                          className='btn btn-link'
+                          onClick={handlClickLogout}
+                        >
+                          Logout
+                        </button>
+                      </li>
+                    </ul>
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

@@ -2,77 +2,99 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import dataDanhMuc from '~/common/data-danhmuc.json';
-import dataSach from '~/common/data-sach.json';
-import { CartContext } from '~/components/user/context/CartContext';
 import { path } from '~/router/router';
 import { formatPrice } from '~/common/properties';
+import axiosInstent, { pathApi } from '~/config/axiosCustom';
+import { AppContext } from '~/context/contextApp';
 
 export default function Home() {
   const [idDanhMuc, setIdDanhMuc] = useState(undefined);
-  const [carts, cartsDispatch] = useContext(CartContext);
+  const [categories, setCategories] = useState([]);
+  const [books, setBooks] = useState([]);
   const navigate = useNavigate();
+  const { appContext, appContextDispatch } = useContext(AppContext);
 
   useEffect(() => {
     window.document.title = 'Home';
     window.scrollTo(0, 0);
-    console.log(carts);
-  }, [carts]);
+    getCategoriesFromApi();
+    getBooksFromApi(0);
+  }, []);
+
+  // call api get categories
+  const getCategoriesFromApi = async () => {
+    try {
+      const response = await axiosInstent.get(pathApi.categories);
+      const data = await response.data;
+      setCategories(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const getBooksFromApi = async (idCategory) => {
+    try {
+      const response =
+        idCategory === 0
+          ? await axiosInstent.get(pathApi.products)
+          : await axiosInstent.get(`${pathApi.products}/category/${idCategory}`);
+      const data = await response.data;
+      // console.log(data);
+      setBooks(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   // render book
   const renderBook = (id) => {
-    return dataSach
-      .filter((sach) => {
-        // filter by id, else chosen all
-        return id ? sach.idDanhMuc === id : true;
-      })
-      .map((sach) => {
-        return (
-          <div
-            className='col-md-3 mb-4'
-            key={sach.id}
-          >
-            <div className='card h-100'>
-              <Link
-                to={`/product-detail/${sach.id}`}
-                style={{ overflow: 'hidden', height: '250px' }}
+    return books.map((book) => {
+      return (
+        <div
+          className='col-md-3 mb-4'
+          key={book.bookId}
+        >
+          <div className='card h-100'>
+            <Link
+              to={`../user/product-detail/${book.bookId}`}
+              style={{ overflow: 'hidden', height: '250px' }}
+            >
+              <img
+                src={`http://localhost:8080/api/images/${book.imageName}`}
+                className='card-img-top custom-hover'
+                alt={book.name}
+                style={{ height: '100%' }}
+              />
+            </Link>
+
+            <div className='card-body'>
+              <p
+                className='h3 text-dark text-center my-3'
+                style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
               >
-                <img
-                  src={`/img/${sach.image}`}
-                  className='card-img-top custom-hover'
-                  alt={sach.name}
-                  style={{ height: '100%' }}
-                />
-              </Link>
+                {book.title}
+              </p>
+              <p className='text-muted text-center'>{formatPrice(book.price)}</p>
 
-              <div className='card-body'>
-                <p
-                  className='h3 text-dark text-center my-3'
-                  style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+              <div className='text-center'>
+                <Link
+                  to={`../user/product-detail/${book.bookId}`}
+                  className='btn btn-outline-primary btn-sm'
                 >
-                  {sach.name}
-                </p>
-                <p className='text-muted text-center'>{formatPrice(sach.price)}</p>
-
-                <div className='text-center'>
-                  <Link
-                    to={`/product-detail/${sach.id}`}
-                    className='btn btn-outline-primary btn-sm'
-                  >
-                    <i className='fa-solid fa-eye'></i> Chi tiết sản phẩm
-                  </Link>
-                  <button
-                    className='btn btn-outline-success mt-3'
-                    onClick={() => handleAddCart(sach)}
-                  >
-                    <i className='me-1 fa fa-shopping-basket'></i> Thêm vào giỏ hàng
-                  </button>
-                </div>
+                  <i className='fa-solid fa-eye'></i> Chi tiết sản phẩm
+                </Link>
+                <button
+                  className='btn btn-outline-success mt-3'
+                  onClick={() => handleAddCart(book)}
+                >
+                  <i className='me-1 fa fa-shopping-basket'></i> Thêm vào giỏ hàng
+                </button>
               </div>
             </div>
           </div>
-        );
-      });
+        </div>
+      );
+    });
   };
 
   // render options
@@ -80,12 +102,12 @@ export default function Home() {
     return (
       <>
         <option value='0'>Tất cả</option>
-        {dataDanhMuc.map((danhMuc) => (
+        {categories.map(({ categoryId, categoryName }) => (
           <option
-            key={danhMuc.id}
-            value={danhMuc.id}
+            key={categoryId}
+            value={categoryId}
           >
-            {danhMuc.name}
+            {categoryName}
           </option>
         ))}
       </>
@@ -95,27 +117,24 @@ export default function Home() {
   // handle select categories
   const handleSelect = (event) => {
     const id = event.target.value;
-    setIdDanhMuc(id === '0' ? undefined : id);
+    getBooksFromApi(Number(id));
+    setIdDanhMuc(Number(id));
   };
 
   // handle click add cart
   const handleAddCart = (book) => {
-    const action = {
-      type: 'ADD',
-      data: book,
-    };
-    cartsDispatch(action);
-    Swal.fire({
-      title: 'Thêm vào giỏ hàng thành công',
-      icon: 'success',
-      confirmButtonText: 'Xem giỏ hàng',
-      showCancelButton: true,
-      cancelButtonText: 'Ở lại đây',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        navigate(path.shoppingCart);
-      }
-    });
+    console.log(book);
+    // Swal.fire({
+    //   title: 'Thêm vào giỏ hàng thành công',
+    //   icon: 'success',
+    //   confirmButtonText: 'Xem giỏ hàng',
+    //   showCancelButton: true,
+    //   cancelButtonText: 'Ở lại đây',
+    // }).then((result) => {
+    //   if (result.isConfirmed) {
+    //     navigate(path.shoppingCart);
+    //   }
+    // });
   };
 
   return (
@@ -144,7 +163,7 @@ export default function Home() {
               </select>
             </div>
           </div>
-          <div className='row'>{renderBook(idDanhMuc)}</div>
+          <div className='row'>{renderBook()}</div>
         </div>
       </section>
     </>

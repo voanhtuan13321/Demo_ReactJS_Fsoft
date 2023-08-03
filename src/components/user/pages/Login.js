@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
 import { path } from '~/router/router';
 import axiosInstent, { pathApi } from '~/config/axiosCustom';
-import { role, setIdOnLocalStorage } from '~/common/handleIdOnLocalStorage';
+import { AppContext } from '~/context/contextApp';
 
 export default function Login() {
   const [inputUser, setInputUser] = useState({
@@ -12,6 +12,7 @@ export default function Login() {
     password: '',
   });
   const navigate = useNavigate();
+  const { appContextDispatch } = useContext(AppContext);
 
   useEffect(() => {
     window.document.title = 'Login';
@@ -35,7 +36,7 @@ export default function Login() {
     const idUser = await response.data;
 
     if (idUser) {
-      setIdOnLocalStorage(role.user, idUser);
+      appContextDispatch({ type: 'ADD_ID_USER', data: idUser });
       Swal.fire({
         title: 'Đăng nhập thành công',
         icon: 'success',

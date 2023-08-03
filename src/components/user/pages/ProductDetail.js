@@ -1,16 +1,14 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import { CartContext } from '~/components/user/context/CartContext';
-import dataSach from '~/common/data-sach.json';
 import { formatPrice } from '~/common/properties';
 import { path } from '~/router/router';
+import axiosInstent, { pathApi } from '~/config/axiosCustom';
 
 export default function ProductDetail() {
   const [book, setBook] = useState({});
   const [soLuong, setSoLuong] = useState(1);
-  const [carts, cartsDispatch] = useContext(CartContext);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -19,25 +17,24 @@ export default function ProductDetail() {
     window.scrollTo(0, 0);
 
     if (id) {
-      // get book in list book
-      const book = dataSach.find((sach) => {
-        return sach.id === id;
-      });
-      setBook(book);
+      getBooksFromApi(id);
+      console.log(book);
     }
-    console.log(carts);
-  }, [carts, id]);
+  }, [id]);
+
+  // get books by id from api
+  const getBooksFromApi = async (bookId) => {
+    try {
+      const response = await axiosInstent.get(`${pathApi.products}/${bookId}`);
+      const data = await response.data;
+      setBook(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // handle click add cart
   const addCart = (book) => {
-    // dispatch to reducer
-    const action = {
-      type: 'ADD',
-      data: book,
-      soLuong: soLuong,
-    };
-    cartsDispatch(action);
-
     // show alert
     Swal.fire({
       title: 'Thêm vào giỏ hàng thành công',
@@ -61,14 +58,14 @@ export default function ProductDetail() {
               <img
                 style={{ width: '600px', height: '600px', margin: 'auto' }}
                 className='rounded-4 fit'
-                src={`/img/${book.image}`}
-                alt={book.name}
+                src={`http://localhost:8080/api/images/${book.imageName}`}
+                alt={book.title}
               />
             </div>
           </aside>
           <main className='col-lg-6'>
             <div className='ps-lg-3'>
-              <h4 className='title text-dark h2'>{book.name}</h4>
+              <h4 className='title text-dark h2'>{book.title}</h4>
               <p className='my-4'>{book.description}</p>
               <div className='row'>
                 <dt className='col-3'>Tác giả:</dt>

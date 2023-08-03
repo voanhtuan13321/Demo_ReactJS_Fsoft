@@ -1,7 +1,8 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { adminPath } from '~/router/router';
+import { AppContext } from '~/context/contextApp';
 
 const navs = [
   {
@@ -15,6 +16,9 @@ const navs = [
 ];
 
 export default function Navbar() {
+  const { appContextDispatch } = useContext(AppContext);
+  const navigate = useNavigate();
+
   // render the navigation
   const renderNavbar = () => {
     return navs.map((nav, i) => {
@@ -37,7 +41,8 @@ export default function Navbar() {
 
   // handle click on logout button
   const handleLogout = () => {
-    alert('Logout');
+    appContextDispatch({ title: 'ADD_ID_ADMIN', data: undefined });
+    navigate('/admin/login');
   };
 
   return (

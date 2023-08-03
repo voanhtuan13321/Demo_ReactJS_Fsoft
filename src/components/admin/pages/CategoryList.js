@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
 import axiosInstent, { pathApi } from '~/config/axiosCustom';
 import CategoryAdd from '~/components/admin/modal/CategoryAdd';
 import CategoryEdit from '~/components/admin/modal/CategoryEdit';
-import { role, getIdOnLocalStorage } from '~/common/handleIdOnLocalStorage';
+import { AppContext } from '~/context/contextApp';
 
 export default function CategoryList() {
   const [categories, setCategories] = useState([]);
@@ -15,11 +15,12 @@ export default function CategoryList() {
     categoryName: '',
   });
   const navigate = useNavigate();
+  const { appContext } = useContext(AppContext);
 
   // call api get all categories
   useEffect(() => {
     // check login
-    const idAdmin = getIdOnLocalStorage(role.admin);
+    const { idAdmin } = appContext;
     if (!idAdmin) {
       navigate('/admin/login');
     }
@@ -27,7 +28,7 @@ export default function CategoryList() {
     window.document.title = 'Categoriy List';
     window.scrollTo(0, 0);
     callApiGetAllCategories();
-  }, [navigate]);
+  }, [appContext, navigate]);
 
   // call api get all categories
   const callApiGetAllCategories = async () => {
