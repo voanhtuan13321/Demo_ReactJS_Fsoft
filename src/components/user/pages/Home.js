@@ -6,13 +6,14 @@ import { path } from '~/router/router';
 import { formatPrice } from '~/common/properties';
 import axiosInstent, { pathApi } from '~/config/axiosCustom';
 import { AppContext } from '~/context/contextApp';
+import { handleAddProductToCart } from '~/common/properties';
 
 export default function Home() {
   const [idDanhMuc, setIdDanhMuc] = useState(undefined);
   const [categories, setCategories] = useState([]);
   const [books, setBooks] = useState([]);
   const navigate = useNavigate();
-  const { appContext, appContextDispatch } = useContext(AppContext);
+  const { appContextDispatch } = useContext(AppContext);
 
   useEffect(() => {
     window.document.title = 'Home';
@@ -121,20 +122,58 @@ export default function Home() {
     setIdDanhMuc(Number(id));
   };
 
+  // call api get all products in cart of user
+  const getProductsInCartFromApi = async (idUser) => {
+    try {
+      const response = await axiosInstent.get(`${pathApi.cart}/${idUser}`);
+      const data = await response.data;
+      appContextDispatch({ type: 'ADD_COUNT_CART', data: data.length });
+      // console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   // handle click add cart
-  const handleAddCart = (book) => {
-    console.log(book);
-    // Swal.fire({
-    //   title: 'Thêm vào giỏ hàng thành công',
-    //   icon: 'success',
-    //   confirmButtonText: 'Xem giỏ hàng',
-    //   showCancelButton: true,
-    //   cancelButtonText: 'Ở lại đây',
-    // }).then((result) => {
-    //   if (result.isConfirmed) {
-    //     navigate(path.shoppingCart);
-    //   }
-    // });
+  const handleAddCart = async (book) => {
+    const idUser = window.localStorage.getItem('idUser');
+
+    if (!idUser) {
+      Swal.fire({
+        title: 'Bạn chưa đăng nhập',
+        icon: 'warning',
+        confirmButtonText: 'Tới trang đăng nhập',
+        showCancelButton: true,
+        cancelButtonText: 'Ở lại đây',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate('../user/login');
+        }
+      });
+      return;
+    }
+
+    try {
+      handleAddProductToCart(idUser, book, 1);
+      Swal.fire({
+        title: 'Thêm vào giỏ hàng thành công',
+        icon: 'success',
+        confirmButtonText: 'Xem giỏ hàng',
+        showCancelButton: true,
+        cancelButtonText: 'Ở lại đây',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate(path.shoppingCart);
+        }
+      });
+      getProductsInCartFromApi(idUser);
+    } catch (e) {
+      Swal.fire({
+        title: 'Thêm vào giỏ hàng thất bại',
+        icon: 'error',
+      });
+      console.error(e);
+    }
   };
 
   return (

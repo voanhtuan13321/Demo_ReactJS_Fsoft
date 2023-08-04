@@ -11,7 +11,9 @@ export default function Header() {
 
   // handl Click Logout
   const handlClickLogout = () => {
+    window.localStorage.removeItem('idUser');
     appContextDispatch({ type: 'ADD_ID_USER', data: undefined });
+    appContextDispatch({ type: 'ADD_COUNT_CART', data: 0 });
     navigate('../user/login');
   };
 
@@ -128,7 +130,7 @@ export default function Header() {
               >
                 <i className='fa fa-fw fa-cart-arrow-down text-dark mr-1'></i>
                 <span className='position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark'>
-                  {0}
+                  {appContext.countCart}
                 </span>
               </Link>
               {appContext.idUser && (

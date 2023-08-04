@@ -19,6 +19,12 @@ const appReducer = (state, action) => {
         idUser: data,
       };
 
+    case 'ADD_COUNT_CART':
+      return {
+        ...state,
+        countCart: data,
+      };
+
     default:
       return state;
   }
@@ -29,6 +35,7 @@ const AppContextProvider = ({ children }) => {
   const [appContext, appContextDispatch] = useReducer(appReducer, {
     idUser: undefined,
     idAdmin: undefined,
+    countCart: 0,
   });
   return <AppContext.Provider value={{ appContext, appContextDispatch }}>{children}</AppContext.Provider>;
 };

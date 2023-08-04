@@ -9,6 +9,7 @@ const pathApi = {
   products: '/books',
   admin: '/admin',
   user: '/users',
+  cart: '/carts',
 };
 
 export default axiosInstent;

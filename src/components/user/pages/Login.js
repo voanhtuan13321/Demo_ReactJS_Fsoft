@@ -23,6 +23,7 @@ export default function Login() {
   const handleClickSignIn = async () => {
     const { email, password } = inputUser;
 
+    // validate input
     if (!email || !password) {
       Swal.fire({
         title: 'Bạn chưa nhập đầy đủ, vui lòng nhập đủ thông tin',
@@ -31,25 +32,46 @@ export default function Login() {
       return;
     }
 
-    const dataUser = { ...inputUser };
-    const response = await axiosInstent.post(`${pathApi.user}/login`, dataUser);
-    const idUser = await response.data;
+    // call api
+    try {
+      const dataUser = { ...inputUser };
+      const response = await axiosInstent.post(`${pathApi.user}/login`, dataUser);
+      const idUser = await response.data;
 
-    if (idUser) {
-      appContextDispatch({ type: 'ADD_ID_USER', data: idUser });
-      Swal.fire({
-        title: 'Đăng nhập thành công',
-        icon: 'success',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          navigate('/user');
-        }
-      });
-    } else {
-      Swal.fire({
-        title: 'Đăng nhập thất bại, tài khoản hoặc mật khẩu không đúng',
-        icon: 'error',
-      });
+      if (idUser) {
+        // store in local storage
+        window.localStorage.setItem('idUser', idUser);
+        appContextDispatch({ type: 'ADD_ID_USER', data: idUser });
+
+        Swal.fire({
+          title: 'Đăng nhập thành công',
+          icon: 'success',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            getProductsInCartFromApi(idUser);
+            navigate('/user');
+          }
+        });
+      } else {
+        Swal.fire({
+          title: 'Đăng nhập thất bại, tài khoản hoặc mật khẩu không đúng',
+          icon: 'error',
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // call api get all products in cart of user
+  const getProductsInCartFromApi = async (idUser) => {
+    try {
+      const response = await axiosInstent.get(`${pathApi.cart}/${idUser}`);
+      const data = await response.data;
+      appContextDispatch({ type: 'ADD_COUNT_CART', data: data.length });
+      // console.log(data);
+    } catch (error) {
+      console.error(error);
     }
   };
 

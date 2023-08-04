@@ -56,14 +56,6 @@ export default function Footer() {
               <li>
                 <Link
                   className='text-decoration-none'
-                  to={path.product}
-                >
-                  Products
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className='text-decoration-none'
                   to={path.about}
                 >
                   About Us

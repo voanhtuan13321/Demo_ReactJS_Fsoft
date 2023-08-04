@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import { formatPrice } from '~/common/properties';
+import { formatPrice, handleAddProductToCart } from '~/common/properties';
 import { path } from '~/router/router';
 import axiosInstent, { pathApi } from '~/config/axiosCustom';
 
@@ -18,9 +18,9 @@ export default function ProductDetail() {
 
     if (id) {
       getBooksFromApi(id);
-      console.log(book);
+      // console.log(book);
     }
-  }, [id]);
+  }, []);
 
   // get books by id from api
   const getBooksFromApi = async (bookId) => {
@@ -35,18 +35,33 @@ export default function ProductDetail() {
 
   // handle click add cart
   const addCart = (book) => {
-    // show alert
-    Swal.fire({
-      title: 'Thêm vào giỏ hàng thành công',
-      icon: 'success',
-      confirmButtonText: 'Xem giỏ hàng',
-      showCancelButton: true,
-      cancelButtonText: 'Ở lại đây',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        navigate(path.shoppingCart);
-      }
-    });
+    const idUser = window.localStorage.getItem('idUser');
+    if (!idUser) {
+      navigate('../../user/login');
+      Swal.fire({
+        title: 'Bạn phải đăng nhập',
+        icon: 'info',
+      });
+      return;
+    }
+
+    try {
+      handleAddProductToCart(idUser, book);
+      // show alert
+      Swal.fire({
+        title: 'Thêm vào giỏ hàng thành công',
+        icon: 'success',
+        confirmButtonText: 'Xem giỏ hàng',
+        showCancelButton: true,
+        cancelButtonText: 'Ở lại đây',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate(`../../user/${path.shoppingCart}`);
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
