@@ -25,6 +25,7 @@ export default function ShoppingCart() {
 
     setIdUser(idUser);
     getProductsInCartFromApi(idUser);
+
     window.document.title = 'Shopping Cart';
     window.scrollTo(0, 0);
   }, []);
@@ -41,6 +42,7 @@ export default function ShoppingCart() {
       console.error(error);
     }
   };
+
   // render cart
   const renderCart = () => {
     return carts.map((cart) => {
@@ -82,7 +84,7 @@ export default function ShoppingCart() {
               <div className='d-flex justify-content-end'>
                 <button
                   className={`btn btn-link px-2 ${cart.quantity === 1 && 'disabled'}`}
-                  // onClick={() => cartsDispatch({ type: 'REDUCE', data: cart })}
+                  onClick={() => handleClickAdd(cart, -1)}
                 >
                   <i className='fas fa-minus'></i>
                 </button>
@@ -90,13 +92,15 @@ export default function ShoppingCart() {
                   type='text'
                   min='0'
                   value={cart.quantity}
-                  onChange={(event) => {}}
+                  onChange={(event) => {
+                    handlechangeQuantity(event, cart);
+                  }}
                   className='form-control form-control-sm text-center'
                   style={{ width: '100px' }}
                 />
                 <button
                   className='btn btn-link px-2'
-                  onClick={() => handleClickAdd(cart.cartId)}
+                  onClick={() => handleClickAdd(cart, 1)}
                 >
                   <i className='fas fa-plus'></i>
                 </button>
@@ -131,10 +135,38 @@ export default function ShoppingCart() {
   };
 
   // handle click +
-  const handleClickAdd = (cart) => {
-    console.log(cart);
-    // const book = dataSach.find(sach => sach.id === cart.id ==)
-    // cartsDispatch({ type: 'INCREASE', data: cart });
+  const handleClickAdd = async (cart, quantity) => {
+    try {
+      const dataCart = {
+        userId: idUser,
+        bookId: cart.book.bookId,
+        quantity,
+      };
+
+      await axiosInstent.post(pathApi.cart, dataCart);
+      getProductsInCartFromApi(idUser);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // handlechangeQuantity
+  const handlechangeQuantity = async (e, cart) => {
+    const quantity = Number(e.target.value);
+    if (!quantity) {
+      return;
+    }
+    const dataCart = {
+      cartId: cart.cartId,
+      quantity: quantity,
+    };
+    try {
+      await axiosInstent.put(pathApi.cart, dataCart);
+
+      getProductsInCartFromApi(idUser);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // handle remove cart

@@ -1,6 +1,3 @@
-import { Navigate, useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
-
 import axiosInstent, { pathApi } from '~/config/axiosCustom';
 
 const link = {
@@ -25,8 +22,9 @@ const handleAddProductToCart = async (idUser, book, quantity = 1) => {
     quantity,
   };
 
-  const response = await axiosInstent.post(pathApi.cart, dataCart);
-  const status = await response.data;
+  axiosInstent.post(pathApi.cart, dataCart);
+  // const response = await axiosInstent.post(pathApi.cart, dataCart);
+  // const status = await response.data;
   // console.log(status);
 };
 

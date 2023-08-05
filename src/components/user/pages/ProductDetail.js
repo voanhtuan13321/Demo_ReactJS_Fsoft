@@ -20,7 +20,7 @@ export default function ProductDetail() {
       getBooksFromApi(id);
       // console.log(book);
     }
-  }, []);
+  }, [id]);
 
   // get books by id from api
   const getBooksFromApi = async (bookId) => {
@@ -46,7 +46,7 @@ export default function ProductDetail() {
     }
 
     try {
-      handleAddProductToCart(idUser, book);
+      handleAddProductToCart(idUser, book, soLuong);
       // show alert
       Swal.fire({
         title: 'Thêm vào giỏ hàng thành công',
@@ -90,9 +90,15 @@ export default function ProductDetail() {
                 <dt className='col-3'>Số lượng:</dt>
                 <dd className='col-9'>
                   <input
-                    type='number'
+                    type='text'
                     value={soLuong}
-                    onChange={(e) => setSoLuong(e.target.value)}
+                    onChange={(e) => {
+                      let str = e.target.value;
+                      if (str === '') str = 1;
+                      const quantity = Number(str);
+                      if (!quantity) return;
+                      setSoLuong(quantity);
+                    }}
                   />
                 </dd>
               </div>
