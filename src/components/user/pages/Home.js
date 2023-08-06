@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
 import { path } from '~/router/router';
-import { formatPrice } from '~/common/properties';
 import axiosInstent, { pathApi } from '~/config/axiosCustom';
 import { AppContext } from '~/context/contextApp';
 import { handleAddProductToCart } from '~/common/properties';
+import CardBook from '~/components/user/pages/CardBook';
 
 export default function Home() {
   const [idDanhMuc, setIdDanhMuc] = useState(undefined);
@@ -55,44 +55,10 @@ export default function Home() {
           className='col-md-3 mb-4'
           key={book.bookId}
         >
-          <div className='card h-100'>
-            <Link
-              to={`../user/product-detail/${book.bookId}`}
-              style={{ overflow: 'hidden', height: '250px' }}
-            >
-              <img
-                src={`http://localhost:8080/api/images/${book.imageName}`}
-                className='card-img-top custom-hover'
-                alt={book.name}
-                style={{ height: '100%' }}
-              />
-            </Link>
-
-            <div className='card-body'>
-              <p
-                className='h3 text-dark text-center my-3'
-                style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
-              >
-                {book.title}
-              </p>
-              <p className='text-muted text-center'>{formatPrice(book.price)}</p>
-
-              <div className='text-center'>
-                <Link
-                  to={`../user/product-detail/${book.bookId}`}
-                  className='btn btn-outline-primary btn-sm'
-                >
-                  <i className='fa-solid fa-eye'></i> Chi tiết sản phẩm
-                </Link>
-                <button
-                  className='btn btn-outline-success mt-3'
-                  onClick={() => handleAddCart(book)}
-                >
-                  <i className='me-1 fa fa-shopping-basket'></i> Thêm vào giỏ hàng
-                </button>
-              </div>
-            </div>
-          </div>
+          <CardBook
+            book={book}
+            handleAddCart={handleAddCart}
+          />
         </div>
       );
     });

@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import { formatPrice, handleAddProductToCart } from '~/common/properties';
+import { formatPrice } from '~/common/properties';
 import axiosInstent, { pathApi } from '~/config/axiosCustom';
 import { AppContext } from '~/context/contextApp';
+import CardCart from '~/components/user/pages/CardCart';
 
 export default function ShoppingCart() {
   const [idUser, setIdUser] = useState(undefined);
@@ -25,6 +26,7 @@ export default function ShoppingCart() {
 
     setIdUser(idUser);
     getProductsInCartFromApi(idUser);
+    checkResultPayment();
 
     window.document.title = 'Shopping Cart';
     window.scrollTo(0, 0);
@@ -51,84 +53,12 @@ export default function ShoppingCart() {
           key={cart.cartId}
           className='card-body p-4'
         >
-          <div className='row d-flex justify-content-between align-items-center'>
-            <div className='col-md-2 col-lg-2 col-xl-2'>
-              <img
-                src={`http://localhost:8080/api/images/${cart.book.imageName}`}
-                className='img-fluid rounded-3'
-                alt={cart.book.title}
-                style={{ width: '150px' }}
-              />
-            </div>
-            <div
-              className='col-md-3 col-lg-3 col-xl-3'
-              style={{ flexGrow: 1000 }}
-            >
-              <p className='lead fw-normal mb-2'>
-                <Link
-                  to={`../../user/product-detail/${cart.book.bookId}`}
-                  style={{ textDecoration: 'none', color: 'black', fontWeight: 'bold' }}
-                >
-                  {cart.book.title}
-                </Link>
-              </p>
-              <p>
-                <span className='text-muted'>Tác giả: </span>
-                {cart.book.author}
-              </p>
-            </div>
-            <div
-              className='col-md-3 col-lg-3 col-xl-2'
-              style={{ flexGrow: 1 }}
-            >
-              <div className='d-flex justify-content-end'>
-                <button
-                  className={`btn btn-link px-2 ${cart.quantity === 1 && 'disabled'}`}
-                  onClick={() => handleClickAdd(cart, -1)}
-                >
-                  <i className='fas fa-minus'></i>
-                </button>
-                <input
-                  type='text'
-                  min='0'
-                  value={cart.quantity}
-                  onChange={(event) => {
-                    handlechangeQuantity(event, cart);
-                  }}
-                  className='form-control form-control-sm text-center'
-                  style={{ width: '100px' }}
-                />
-                <button
-                  className='btn btn-link px-2'
-                  onClick={() => handleClickAdd(cart, 1)}
-                >
-                  <i className='fas fa-plus'></i>
-                </button>
-              </div>
-            </div>
-            <div
-              className='col-md-3 col-lg-2 col-xl-2 offset-lg-1'
-              style={{ flexGrow: 1, width: '150px' }}
-            >
-              <div className='text-center'>
-                <h5 className='mb-0'>{formatPrice(cart.book.price * cart.quantity)}</h5>
-              </div>
-            </div>
-            <div
-              className='col-md-1 col-lg-1 col-xl-1 text-end'
-              style={{ flexGrow: 1 }}
-            >
-              <div className='text-center'>
-                <button
-                  className='text-danger'
-                  style={{ border: 'none', backgroundColor: 'transparent' }}
-                  onClick={() => removeCart(cart)}
-                >
-                  <i className='fas fa-trash fa-lg'></i>
-                </button>
-              </div>
-            </div>
-          </div>
+          <CardCart
+            cart={cart}
+            handleClickAdd={handleClickAdd}
+            handlechangeQuantity={handlechangeQuantity}
+            removeCart={removeCart}
+          />
         </div>
       );
     });
@@ -203,6 +133,58 @@ export default function ShoppingCart() {
     }, 0);
   };
 
+  // is Enough Information
+  const isEnoughInformation = (user) => {
+    const { name, address, phone } = user;
+    return name && address && phone;
+  };
+
+  // handleClickPayment
+  const handleClickPayment = async () => {
+    // check user has information
+    const responseUser = await axiosInstent.get(`${pathApi.user}/info/${idUser}`);
+    const dataUser = await responseUser.data;
+
+    if (!isEnoughInformation(dataUser)) {
+      Swal.fire({
+        title: 'Bạn chưa điền đủ thông tin',
+        icon: 'warning',
+        confirmButtonText: 'Tới trang thông tin cá nhân',
+        showCancelButton: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate('/user/info');
+        }
+      });
+      return;
+    }
+
+    const dataPayment = {
+      amount: sumPrice(),
+      vnpOrderInfo: 'information',
+      vnpReturnUrl: 'http://localhost:3000/user/shopping-cart',
+    };
+
+    const responsePayment = await axiosInstent.post(pathApi.payment, dataPayment);
+    const linkPayment = await responsePayment.data;
+    window.location.href = linkPayment;
+  };
+
+  // check ressult payment
+  const checkResultPayment = () => {
+    const paramResponseCode = new URL(window.location).searchParams.get('vnp_ResponseCode');
+
+    if (paramResponseCode != null) {
+      if (Number(paramResponseCode) === 0) {
+        Swal.fire('Đặt hàng thành công', '', 'success');
+      }
+      if (Number(paramResponseCode) === 24) {
+      } else {
+        Swal.fire('Đặt hàng không thành công', 'có vẻ quá trình đặt hàng đã gặp vấn đề', 'error');
+      }
+    }
+  };
+
   return (
     <section
       className='h-100'
@@ -223,7 +205,12 @@ export default function ShoppingCart() {
                       <span className='fw-bold'>Tổng tiền: </span>
                       {formatPrice(sumPrice())}
                     </p>
-                    <button className='btn btn-primary'>Thanh toán</button>
+                    <button
+                      className='btn btn-primary'
+                      onClick={handleClickPayment}
+                    >
+                      Thanh toán
+                    </button>
                   </>
                 )}
               </div>

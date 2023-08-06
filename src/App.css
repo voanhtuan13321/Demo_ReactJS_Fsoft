@@ -351,5 +351,6 @@ div {
 }
 
 .btn-account:hover .box-account {
+  z-index: 1000;
   display: block !important;
 }

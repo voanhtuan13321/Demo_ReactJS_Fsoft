@@ -8,6 +8,7 @@ import Login from '~/components/user/pages/Login';
 import Register from '~/components/user/pages/Register';
 import CategoryList from '~/components/admin/pages/CategoryList';
 import BookList from '~/components/admin/pages/BookList';
+import Info from '~/components/user/pages/Info';
 
 const path = {
   home: '',
@@ -17,6 +18,7 @@ const path = {
   shoppingCart: 'shopping-cart',
   login: 'login',
   register: 'register',
+  info: 'info',
 };
 
 const adminPath = {
@@ -55,6 +57,10 @@ const routes = [
   {
     path: path.register,
     element: <Register />,
+  },
+  {
+    path: path.info,
+    element: <Info />,
   },
   {
     path: '*',

@@ -144,7 +144,7 @@ export default function Header() {
                       <li>
                         <Link
                           className='btn'
-                          to='/'
+                          to={`${path.info}`}
                         >
                           Profile
                         </Link>
