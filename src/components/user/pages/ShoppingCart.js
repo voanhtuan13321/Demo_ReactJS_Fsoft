@@ -30,6 +30,7 @@ export default function ShoppingCart() {
 
     window.document.title = 'Shopping Cart';
     window.scrollTo(0, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // call api get all products in cart of user
