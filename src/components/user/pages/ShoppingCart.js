@@ -65,7 +65,7 @@ export default function ShoppingCart() {
     });
   };
 
-  // handle click +
+  // handle click + or -
   const handleClickAdd = async (cart, quantity) => {
     try {
       const dataCart = {
@@ -81,7 +81,7 @@ export default function ShoppingCart() {
     }
   };
 
-  // handlechangeQuantity
+  // handle change Quantity
   const handlechangeQuantity = async (e, cart) => {
     const quantity = Number(e.target.value);
     if (!quantity) {
@@ -178,8 +178,11 @@ export default function ShoppingCart() {
     if (paramResponseCode != null) {
       if (Number(paramResponseCode) === 0) {
         Swal.fire('Đặt hàng thành công', '', 'success');
-      }
-      if (Number(paramResponseCode) === 24) {
+        navigate('/user/shopping-cart');
+
+        // create order
+        axiosInstent.post(`${pathApi.order}/${idUser}`);
+      } else if (Number(paramResponseCode) === 24) {
       } else {
         Swal.fire('Đặt hàng không thành công', 'có vẻ quá trình đặt hàng đã gặp vấn đề', 'error');
       }

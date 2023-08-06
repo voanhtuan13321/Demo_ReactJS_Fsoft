@@ -9,6 +9,8 @@ import Register from '~/components/user/pages/Register';
 import CategoryList from '~/components/admin/pages/CategoryList';
 import BookList from '~/components/admin/pages/BookList';
 import Info from '~/components/user/pages/Info';
+import Order from '~/components/user/pages/Order';
+import OrderDetail from '~/components/user/pages/OrderDetail';
 
 const path = {
   home: '',
@@ -19,6 +21,8 @@ const path = {
   login: 'login',
   register: 'register',
   info: 'info',
+  order: 'order',
+  orderDetail: 'order-detail/:id',
 };
 
 const adminPath = {
@@ -61,6 +65,14 @@ const routes = [
   {
     path: path.info,
     element: <Info />,
+  },
+  {
+    path: path.order,
+    element: <Order />,
+  },
+  {
+    path: path.orderDetail,
+    element: <OrderDetail />,
   },
   {
     path: '*',

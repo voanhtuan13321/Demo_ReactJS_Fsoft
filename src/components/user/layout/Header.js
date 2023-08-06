@@ -144,9 +144,17 @@ export default function Header() {
                       <li>
                         <Link
                           className='btn'
-                          to={`${path.info}`}
+                          to={path.info}
                         >
                           Profile
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          className='btn'
+                          to={path.order}
+                        >
+                          Order
                         </Link>
                       </li>
                       <li>

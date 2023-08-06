@@ -11,6 +11,8 @@ const pathApi = {
   user: '/users',
   cart: '/carts',
   payment: '/payment/create-payment',
+  order: '/orders',
+  orderDetail: '/order-details',
 };
 
 export default axiosInstent;
