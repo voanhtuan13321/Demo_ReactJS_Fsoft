@@ -196,7 +196,7 @@ export default function BookList() {
             <td>{book.author}</td>
             <td className='text-center'>
               <img
-                src={`http://localhost:8080/api/images/${book.imageName}`}
+                src={book.imageName}
                 alt=''
                 style={{ width: '50px', height: '50px' }}
               />

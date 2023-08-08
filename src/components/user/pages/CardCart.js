@@ -8,7 +8,7 @@ export default function CardCart({ cart, handleClickAdd, handlechangeQuantity, r
     <div className='row d-flex justify-content-between align-items-center'>
       <div className='col-md-2 col-lg-2 col-xl-2'>
         <img
-          src={`http://localhost:8080/api/images/${cart.book.imageName}`}
+          src={cart.book.imageName}
           className='img-fluid rounded-3'
           alt={cart.book.title}
           style={{ width: '150px' }}

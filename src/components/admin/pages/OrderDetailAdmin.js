@@ -45,9 +45,9 @@ export default function OrderDetailAdmin() {
         >
           <div className='col-md-2'>
             <img
-              src={`http://localhost:8080/api/images/${detail.book.imageName}`}
+              src={detail.book.imageName}
               className='img-fluid'
-              alt=''
+              alt={detail.book.title}
             />
           </div>
           <div className='col-md-6 d-flex align-items-center'>
@@ -57,7 +57,9 @@ export default function OrderDetailAdmin() {
             <p className='text-muted mb-0 small'>Qty: {}</p>
           </div>
           <div className='col-md-2 text-center d-flex justify-content-center align-items-center'>
-            <p className='text-muted mb-0 small'>{formatPrice(detail.quantity * detail.book.price)}</p>
+            <p className='text-muted mb-0 small'>
+              {formatPrice(detail.quantity * detail.book.price)}
+            </p>
           </div>
         </div>
       );
@@ -122,7 +124,9 @@ export default function OrderDetailAdmin() {
                         <p className='small text-muted mb-0'>Phone : {getInfoClient()?.phone}</p>
                       </div>
                       <div className='d-flex justify-content-between align-items-center mb-4'>
-                        <p className='small text-muted mb-0'>Address : {getInfoClient()?.address}</p>
+                        <p className='small text-muted mb-0'>
+                          Address : {getInfoClient()?.address}
+                        </p>
                       </div>
                       <div className='d-flex justify-content-center align-items-center mb-4'>
                         <h3 className='text-center mb-0'>Danh sách sản phẩm</h3>

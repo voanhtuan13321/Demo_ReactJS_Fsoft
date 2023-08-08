@@ -73,7 +73,7 @@ export default function ProductDetail() {
               <img
                 style={{ width: '600px', height: '600px', margin: 'auto' }}
                 className='rounded-4 fit'
-                src={`http://localhost:8080/api/images/${book.imageName}`}
+                src={book.imageName}
                 alt={book.title}
               />
             </div>

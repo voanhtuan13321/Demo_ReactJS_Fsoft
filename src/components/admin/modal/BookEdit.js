@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from 'react';
 
-export default function BookEdit({ inputEditBook, setInputEditBook, handleEditBookClick, renderOptions }) {
-  const [base64String, setBase64String] = useState('https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg');
+export default function BookEdit({
+  inputEditBook,
+  setInputEditBook,
+  handleEditBookClick,
+  renderOptions,
+}) {
+  const [base64String, setBase64String] = useState(
+    'https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg'
+  );
 
   useEffect(() => {
     // console.log('edt', inputEditBook);
-    inputEditBook.imageName && setBase64String(`http://localhost:8080/api/images/${inputEditBook.imageName}`);
+    inputEditBook.imageName && setBase64String(inputEditBook.imageName);
   }, [inputEditBook]);
 
   const handleOnChangeImage = (e) => {

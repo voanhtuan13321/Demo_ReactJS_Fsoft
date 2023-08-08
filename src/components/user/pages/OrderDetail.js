@@ -45,7 +45,7 @@ export default function OrderDetail() {
         >
           <div className='col-md-2'>
             <img
-              src={`http://localhost:8080/api/images/${detail.book.imageName}`}
+              src={detail.book.imageName}
               className='img-fluid'
               alt=''
             />

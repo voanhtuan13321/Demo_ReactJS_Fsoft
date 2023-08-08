@@ -11,7 +11,7 @@ export default function CardBook({ book, handleAddCart }) {
         style={{ overflow: 'hidden', height: '250px' }}
       >
         <img
-          src={`http://localhost:8080/api/images/${book.imageName}`}
+          src={book.imageName}
           className='card-img-top custom-hover'
           alt={book.name}
           style={{ height: '100%' }}
