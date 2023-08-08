@@ -24,6 +24,7 @@ export default function Info() {
       return;
     }
     getInforUserFromApi(idUser);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getInforUserFromApi = async (idUser) => {

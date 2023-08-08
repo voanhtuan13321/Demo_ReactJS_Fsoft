@@ -5,7 +5,6 @@ import Swal from 'sweetalert2';
 import axiosInstent, { pathApi } from '~/config/axiosCustom';
 import CategoryAdd from '~/components/admin/modal/CategoryAdd';
 import CategoryEdit from '~/components/admin/modal/CategoryEdit';
-import { AppContext } from '~/context/contextApp';
 
 export default function CategoryList() {
   const [categories, setCategories] = useState([]);
@@ -15,20 +14,23 @@ export default function CategoryList() {
     categoryName: '',
   });
   const navigate = useNavigate();
-  const { appContext } = useContext(AppContext);
 
-  // call api get all categories
   useEffect(() => {
-    // check login
-    const { idAdmin } = appContext;
+    const idAdmin = window.localStorage.getItem('idAdmin');
     if (!idAdmin) {
-      navigate('/admin/login');
+      navigate('../../admin/login');
+      Swal.fire({
+        title: 'Bạn phải đăng nhập',
+        icon: 'info',
+      });
+      return;
     }
 
     window.document.title = 'Categoriy List';
     window.scrollTo(0, 0);
     callApiGetAllCategories();
-  }, [appContext, navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // call api get all categories
   const callApiGetAllCategories = async () => {

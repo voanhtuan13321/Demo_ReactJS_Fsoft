@@ -12,6 +12,7 @@ export default function Home() {
   const [idDanhMuc, setIdDanhMuc] = useState(undefined);
   const [categories, setCategories] = useState([]);
   const [books, setBooks] = useState([]);
+  const [search, setSearch] = useState('');
   const navigate = useNavigate();
   const { appContextDispatch } = useContext(AppContext);
 
@@ -33,12 +34,14 @@ export default function Home() {
     }
   };
 
-  const getBooksFromApi = async (idCategory) => {
+  const getBooksFromApi = async (idCategory, search = '') => {
     try {
       const response =
-        idCategory === 0
-          ? await axiosInstent.get(pathApi.products)
-          : await axiosInstent.get(`${pathApi.products}/category/${idCategory}`);
+        idCategory === 0 || idCategory === undefined
+          ? await axiosInstent.get(pathApi.products, { params: { search } })
+          : await axiosInstent.get(`${pathApi.products}/category/${idCategory}`, {
+              params: { search },
+            });
       const data = await response.data;
       // console.log(data);
       setBooks(data);
@@ -86,6 +89,7 @@ export default function Home() {
     const id = event.target.value;
     getBooksFromApi(Number(id));
     setIdDanhMuc(Number(id));
+    setSearch('');
   };
 
   // call api get all products in cart of user
@@ -142,12 +146,18 @@ export default function Home() {
     }
   };
 
+  // handle click search
+  const handleSearch = () => {
+    // console.log(search);
+    getBooksFromApi(idDanhMuc, search);
+  };
+
   return (
     <>
       <section className='bg-success py-5'>
         <div className='align-items-center py-5'>
-          <div className='text-white py-5'>
-            <p className='text-center h2 py-4'>Welcome to the Book-Shop</p>
+          <div className='text-white'>
+            <p className='text-center h2'>Welcome to the Book-Shop</p>
             <h1 className='text-center h1 py-4'>IT'S NICE TO MEET YOU</h1>
           </div>
         </div>
@@ -156,16 +166,32 @@ export default function Home() {
       <section className='bg-light'>
         <div className='container py-5'>
           <div className='row text-center py-3'>
-            <div className='col-lg-6 m-auto'>
+            <div className='col-lg-9 m-auto'>
               <h1 className='h1'>Danh sách các sản phẩm</h1>
               <select
-                className='form-select mx-auto my-5'
+                className='form-select mx-auto my-3'
                 style={{ width: '300px' }}
                 onChange={handleSelect}
                 value={idDanhMuc} // Giá trị idDanhMuc hiện tại để chọn mặc định
               >
                 {renderOptions()}
               </select>
+              <div className='d-flex justify-content-center mb-4'>
+                <input
+                  className='form-control'
+                  type='text'
+                  style={{ width: '500px' }}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder='Nhập từ khoá tìm kiếm ...'
+                />
+                <button
+                  className='btn btn-info ml-2'
+                  onClick={handleSearch}
+                >
+                  Tìm kiếm
+                </button>
+              </div>
             </div>
           </div>
           <div className='row'>{renderBook()}</div>

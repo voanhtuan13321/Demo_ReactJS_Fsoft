@@ -1,22 +1,24 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { adminPath } from '~/router/router';
-import { AppContext } from '~/context/contextApp';
 
 const navs = [
+  {
+    to: adminPath.orderList,
+    text: 'Orders',
+  },
   {
     to: adminPath.categoryList,
     text: 'Category',
   },
   {
-    to: 'products',
+    to: adminPath.productsList,
     text: 'Products',
   },
 ];
 
 export default function Navbar() {
-  const { appContextDispatch } = useContext(AppContext);
   const navigate = useNavigate();
 
   // render the navigation
@@ -31,7 +33,7 @@ export default function Navbar() {
             className='nav-link'
             to={nav.to}
           >
-            <i className='fas fa-fw fa-cog'></i>
+            <i className='fas fa-fw fa-list-check'></i>
             <span>{nav.text}</span>
           </Link>
         </li>
@@ -41,7 +43,7 @@ export default function Navbar() {
 
   // handle click on logout button
   const handleLogout = () => {
-    appContextDispatch({ title: 'ADD_ID_ADMIN', data: undefined });
+    window.localStorage.removeItem('idAdmin');
     navigate('/admin/login');
   };
 

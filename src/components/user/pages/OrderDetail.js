@@ -57,7 +57,9 @@ export default function OrderDetail() {
             <p className='text-muted mb-0 small'>Qty: {}</p>
           </div>
           <div className='col-md-2 text-center d-flex justify-content-center align-items-center'>
-            <p className='text-muted mb-0 small'>{formatPrice(detail.quantity * detail.book.price)}</p>
+            <p className='text-muted mb-0 small'>
+              {formatPrice(detail.quantity * detail.book.price)}
+            </p>
           </div>
         </div>
       );

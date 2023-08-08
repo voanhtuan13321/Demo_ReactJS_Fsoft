@@ -36,6 +36,7 @@ const AppContextProvider = ({ children }) => {
     idUser: undefined,
     idAdmin: undefined,
     countCart: 0,
+    isSuccess: false,
   });
   return <AppContext.Provider value={{ appContext, appContextDispatch }}>{children}</AppContext.Provider>;
 };

@@ -175,13 +175,23 @@ export default function ShoppingCart() {
   const checkResultPayment = () => {
     const paramResponseCode = new URL(window.location).searchParams.get('vnp_ResponseCode');
 
-    if (paramResponseCode != null) {
+    if (paramResponseCode) {
       if (Number(paramResponseCode) === 0) {
         Swal.fire('Đặt hàng thành công', '', 'success');
-        navigate('/user/shopping-cart');
-
-        // create order
-        axiosInstent.post(`${pathApi.order}/${idUser}`);
+        let id = idUser;
+        if (!id) {
+          id = window.localStorage.getItem('idUser');
+        }
+        axiosInstent.post(`${pathApi.order}/${id}`).then((response) => {
+          if (response.data) {
+            // navigate('/user/shopping-cart');
+            window.location.href = 'http://localhost:3000/user/shopping-cart';
+            // Ngăn người dùng sử dụng nút "Back" trên trình duyệt
+            window.addEventListener('popstate', (event) => {
+              window.history.pushState(null, '', window.location.href);
+            });
+          }
+        });
       } else if (Number(paramResponseCode) === 24) {
       } else {
         Swal.fire('Đặt hàng không thành công', 'có vẻ quá trình đặt hàng đã gặp vấn đề', 'error');

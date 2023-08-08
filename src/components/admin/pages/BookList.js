@@ -8,6 +8,8 @@ import BookEdit from '~/components/admin/modal/BookEdit';
 import { AppContext } from '~/context/contextApp';
 
 export default function BookList() {
+  const [idDanhMuc, setIdDanhMuc] = useState(undefined);
+  const [search, setSearch] = useState('');
   const [categories, setCategories] = useState([]);
   const [books, setBooks] = useState([]);
   const [inputAddBook, setInputAddBook] = useState({
@@ -33,10 +35,14 @@ export default function BookList() {
   const { appContext } = useContext(AppContext);
 
   useEffect(() => {
-    // check login
-    const { idAdmin } = appContext;
+    const idAdmin = window.localStorage.getItem('idAdmin');
     if (!idAdmin) {
-      navigate('/admin/login');
+      navigate('../../admin/login');
+      Swal.fire({
+        title: 'Bạn phải đăng nhập',
+        icon: 'info',
+      });
+      return;
     }
 
     window.document.title = 'Book List';
@@ -227,11 +233,41 @@ export default function BookList() {
     );
   };
 
+  // handle select categories
+  const handleSelect = (event) => {
+    const id = event.target.value;
+    getBooksFromApi(Number(id));
+    setIdDanhMuc(Number(id));
+    setSearch('');
+  };
+
+  const getBooksFromApi = async (idCategory, search = '') => {
+    try {
+      const response =
+        idCategory === 0 || idCategory === undefined
+          ? await axiosInstent.get(pathApi.products, { params: { search } })
+          : await axiosInstent.get(`${pathApi.products}/category/${idCategory}`, {
+              params: { search },
+            });
+      const data = await response.data;
+      // console.log(data);
+      setBooks(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // handle click search
+  const handleSearch = () => {
+    // console.log(search);
+    getBooksFromApi(idDanhMuc, search);
+  };
+
   return (
     <div className='container-fluid'>
       <h1 className='h2 my-5 text-gray-800'>Books list</h1>
       <div className='card shadow mb-4'>
-        <div className='card-header py-3'>
+        <div className='card-header py-3 d-flex'>
           <button
             className='btn btn-success btn-icon-split'
             data-bs-toggle='modal'
@@ -242,12 +278,31 @@ export default function BookList() {
             </span>
             <span className='text'>Add new</span>
           </button>
+          <select
+            className='form-select ml-3'
+            style={{ width: '200px' }}
+            onChange={handleSelect}
+            value={idDanhMuc} // Giá trị idDanhMuc hiện tại để chọn mặc định
+          >
+            {renderOptions()}
+          </select>
+          <input
+            className='form-control ml-3'
+            type='text'
+            style={{ width: '500px' }}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder='Nhập từ khoá tìm kiếm ...'
+          />
+          <button
+            className='btn btn-info ml-3'
+            onClick={handleSearch}
+          >
+            Tìm kiếm
+          </button>
         </div>
         <div className='card-body'>
-          <table
-            className='table table-sm table-bordered mx-auto'
-            // style={{ width: '1000px' }}
-          >
+          <table className='table table-sm table-bordered mx-auto'>
             <thead>
               <tr role='row'>
                 <th width='100px'>Id</th>

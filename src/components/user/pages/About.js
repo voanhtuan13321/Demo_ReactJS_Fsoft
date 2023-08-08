@@ -14,9 +14,9 @@ export default function About() {
             <div className='text-white'>
               <h1 className='text-center'>About Us</h1>
               <p className='text-center'>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                ex ea commodo consequat.
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
               </p>
             </div>
           </div>
@@ -27,7 +27,10 @@ export default function About() {
         <div className='text-center pt-5 pb-3'>
           <div className='col-lg-4 m-auto'>
             <h1 className='h1'>Our Services</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod Lorem ipsum dolor sit amet.</p>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod Lorem ipsum
+              dolor sit amet.
+            </p>
           </div>
         </div>
         <div className='row'>

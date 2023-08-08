@@ -21,6 +21,7 @@ export default function Order() {
     }
 
     getAllOrdersFromApi(idUser);
+    getAllOrdersComfirmedFromApi(idUser);
     window.document.title = 'Order';
     window.scrollTo(0, 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -105,7 +106,11 @@ export default function Order() {
     const hours = dateObject.getHours();
     const minutes = dateObject.getMinutes();
     const seconds = dateObject.getSeconds();
-    return { timeMili: dateObject.getTime(), time: `${hours}:${minutes}:${seconds}`, day: `${day}/${month}/${year}` };
+    return {
+      timeMili: dateObject.getTime(),
+      time: `${hours}:${minutes}:${seconds}`,
+      day: `${day}/${month}/${year}`,
+    };
   };
 
   return (
@@ -123,7 +128,6 @@ export default function Order() {
                     <div className='card-body p-0'>
                       <div
                         className='table-responsive table-scroll'
-                        data-mdb-perfect-scrollbar='true'
                         style={{ position: 'relative', height: '400px' }}
                       >
                         <table className='table mb-0'>
@@ -135,7 +139,7 @@ export default function Order() {
                               <th scope='col'>Action</th>
                             </tr>
                           </thead>
-                          <tbody>{renderOrder()}</tbody>
+                          <tbody data-mdb-perfect-scrollbar='true'>{renderOrder()}</tbody>
                         </table>
                       </div>
                     </div>

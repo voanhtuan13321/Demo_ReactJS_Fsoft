@@ -1,15 +1,13 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
 import axiosInstent, { pathApi } from '~/config/axiosCustom';
-import { AppContext } from '~/context/contextApp';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const { appContextDispatch } = useContext(AppContext);
 
   // handle Click Sign In
   const handleClickSignIn = async () => {
@@ -28,8 +26,8 @@ export default function Login() {
     const responseCheckLogin = await axiosInstent.post(`${pathApi.admin}/check`, dataAdmin);
     const idAdmin = await responseCheckLogin.data;
     if (idAdmin) {
-      appContextDispatch({ type: 'ADD_ID_ADMIN', data: idAdmin });
-      navigate('../admin/category-list');
+      window.localStorage.setItem('idAdmin', idAdmin);
+      navigate('../admin/order-list');
     }
   };
 
