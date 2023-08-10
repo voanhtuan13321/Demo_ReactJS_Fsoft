@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import { path } from '~/router/router';
-import axiosInstent, { pathApi } from '~/config/axiosCustom';
+import { path } from '../../../router/router';
+import axiosInstent, { pathApi } from '../../../config/axiosCustom';
 
 export default function Register() {
   const [inputUser, setInputUser] = useState({

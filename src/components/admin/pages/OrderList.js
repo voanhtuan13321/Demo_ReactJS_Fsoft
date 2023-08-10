@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import axiosInstent, { pathApi } from '~/config/axiosCustom';
+import axiosInstent, { pathApi } from '../../../config/axiosCustom';
 
 export default function OrderList() {
   const navigate = useNavigate();
@@ -116,7 +116,11 @@ export default function OrderList() {
     const hours = dateObject.getHours();
     const minutes = dateObject.getMinutes();
     const seconds = dateObject.getSeconds();
-    return { timeMili: dateObject.getTime(), time: `${hours}:${minutes}:${seconds}`, day: `${day}/${month}/${year}` };
+    return {
+      timeMili: dateObject.getTime(),
+      time: `${hours}:${minutes}:${seconds}`,
+      day: `${day}/${month}/${year}`,
+    };
   };
 
   return (

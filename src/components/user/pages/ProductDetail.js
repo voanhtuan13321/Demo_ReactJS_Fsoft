@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import { formatPrice, handleAddProductToCart } from '~/common/properties';
-import { path } from '~/router/router';
-import axiosInstent, { pathApi } from '~/config/axiosCustom';
+import { formatPrice, handleAddProductToCart } from '../../../common/properties';
+import { path } from '../../../router/router';
+import axiosInstent, { pathApi } from '../../../config/axiosCustom';
 
 export default function ProductDetail() {
   const [book, setBook] = useState({});

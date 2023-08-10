@@ -1,4 +1,4 @@
-import axiosInstent, { pathApi } from '~/config/axiosCustom';
+import axiosInstent, { pathApi } from '../config/axiosCustom';
 
 const link = {
   facebook: 'https://www.facebook.com',
@@ -13,7 +13,8 @@ const text = {
   address: '123 Lê Độ, Đà Nẵng',
 };
 
-const formatPrice = (price) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+const formatPrice = (price) =>
+  new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
 
 const handleAddProductToCart = async (idUser, book, quantity = 1) => {
   const dataCart = {

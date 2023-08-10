@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { formatPrice } from '~/common/properties';
+import { formatPrice } from '../../../common/properties';
 
 export default function CardCart({ cart, handleClickAdd, handlechangeQuantity, removeCart }) {
   return (

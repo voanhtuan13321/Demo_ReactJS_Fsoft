@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import axiosInstent, { pathApi } from '~/config/axiosCustom';
-import BookAdd from '~/components/admin/modal/BookAdd';
-import BookEdit from '~/components/admin/modal/BookEdit';
-import { AppContext } from '~/context/contextApp';
+import axiosInstent, { pathApi } from '../../../config/axiosCustom';
+import BookAdd from '../../admin/modal/BookAdd';
+import BookEdit from '../../admin/modal/BookEdit';
+import { AppContext } from '../../../context/contextApp';
 
 export default function BookList() {
   const [idDanhMuc, setIdDanhMuc] = useState(undefined);

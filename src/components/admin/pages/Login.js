@@ -1,20 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import { useFormik } from 'formik';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import * as Yup from 'yup';
 
-import axiosInstent, { pathApi } from '~/config/axiosCustom';
+import axiosInstent, { pathApi } from '../../../config/axiosCustom';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const refEmail = useRef(null);
+  const refPass = useRef(null);
   const navigate = useNavigate();
+  const validationSchema = Yup.object({
+    email: Yup.string()
+      .required('Tài khoản không được để trống')
+      .max(50, 'Không được nhập quá 50 ký tự'),
+    password: Yup.string()
+      .required('Mật khẩu không được để trống')
+      .max(50, 'Không được nhập quá 50 ký tự'),
+  });
+  const formik = useFormik({
+    initialValues: { email: '', password: '' },
+    validationSchema,
+    onSubmit: (values) => {
+      handleSubmit(values);
+    },
+  });
 
   useEffect(() => {
     window.document.title = 'Login';
   }, []);
 
   // handle Click Sign In
-  const handleClickSignIn = async () => {
+  const handleSubmit = async ({ email, password }) => {
     try {
       // check exist email
       await axiosInstent.get(`${pathApi.admin}/${email}`);
@@ -27,6 +44,7 @@ export default function Login() {
         console.error('Status code:', status);
         Swal.fire('Đã có lỗi xảy ra', '', 'error');
       }
+      refEmail.current.focus();
       return;
     }
 
@@ -51,9 +69,10 @@ export default function Login() {
 
   return (
     <>
-      <div
+      <form
         className='mx-auto'
         style={{ width: '500px' }}
+        onSubmit={formik.handleSubmit}
       >
         <h1 className='text-center my-5'>LOGIN</h1>
 
@@ -62,15 +81,19 @@ export default function Login() {
             className='form-label'
             htmlFor='form1Example13'
           >
-            Email address
+            Account
           </label>
           <input
-            type='email'
+            ref={refEmail}
+            type='text'
             id='form1Example13'
             className='form-control form-control-lg'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            // name='email'
+            // value={formik.values.email}
+            // onChange={formik.handleChange}
+            {...formik.getFieldProps('email')}
           />
+          {formik.errors.email && <p className='mt-1 text-danger'>{formik.errors.email}</p>}
         </div>
 
         <div className='form-outline mb-4'>
@@ -81,21 +104,20 @@ export default function Login() {
             Password
           </label>
           <input
+            ref={refPass}
             type='password'
             id='form1Example23'
             className='form-control form-control-lg'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            // name='password'
+            // value={formik.values.password}
+            // onChange={formik.handleChange}
+            {...formik.getFieldProps('password')}
           />
+          {formik.errors.password && <p className='mt-1 text-danger'>{formik.errors.password}</p>}
         </div>
 
-        <button
-          className='btn btn-primary btn-lg btn-block'
-          onClick={handleClickSignIn}
-        >
-          Sign in
-        </button>
-      </div>
+        <button className='btn btn-primary btn-lg btn-block'>Sign in</button>
+      </form>
     </>
   );
 }

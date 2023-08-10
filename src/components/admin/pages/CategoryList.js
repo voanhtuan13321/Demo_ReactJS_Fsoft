@@ -1,17 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
-import axiosInstent, { pathApi } from '~/config/axiosCustom';
-import CategoryAdd from '~/components/admin/modal/CategoryAdd';
-import CategoryEdit from '~/components/admin/modal/CategoryEdit';
+import axiosInstent, { pathApi } from '../../../config/axiosCustom';
+import CategoryModal from '../modal/CategoryModal';
 
 export default function CategoryList() {
+  const [statusModal, setStatusModal] = useState(undefined);
   const [categories, setCategories] = useState([]);
-  const [inputAddCategory, setInputAddCategory] = useState('');
-  const [inputEditCategory, setInputEditCategory] = useState({
-    categoryId: '',
-    categoryName: '',
+  const inputAddFormik = useFormik({
+    initialValues: {
+      categoryName: '',
+    },
+    validationSchema: Yup.object({
+      categoryName: Yup.string().required('Không được để trống'),
+    }),
+    onSubmit: (values) => {
+      if (!statusModal) {
+        return;
+      }
+      if (statusModal === 'Add') {
+        handleClickAdd(values);
+      } else if (statusModal === 'Edit') {
+        handleClickEdit(values);
+      }
+    },
   });
   const navigate = useNavigate();
 
@@ -39,8 +54,10 @@ export default function CategoryList() {
       const categories = await response.data;
       // console.log('cate', categories);
       setCategories(categories);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      const { status } = error.response;
+      console.error('Status code:', status);
+      Swal.fire('Đã có lỗi xảy ra', '', 'error');
     }
   };
 
@@ -65,7 +82,7 @@ export default function CategoryList() {
               <button
                 className='btn btn-sm btn-info btn-icon-split'
                 data-bs-toggle='modal'
-                data-bs-target='#modalEditCategory'
+                data-bs-target='#modalAddCategory'
                 onClick={() => handleShowViewEdit(category.categoryId)}
               >
                 <span className='icon text-white-50'>
@@ -92,56 +109,65 @@ export default function CategoryList() {
   };
 
   // handle click on add button
-  const handleClickAdd = () => {
-    const dataCategory = {
-      categoryName: inputAddCategory,
-    };
-
-    axiosInstent.post(pathApi.categories, dataCategory).then((response) => {
-      // console.log(response);
-      setInputAddCategory('');
-      Swal.fire({
-        title: 'Thêm thành công',
-        icon: 'success',
-      });
-      callApiGetAllCategories();
-    });
+  const handleClickAdd = async (dataCategory) => {
+    try {
+      const response = await axiosInstent.post(pathApi.categories, dataCategory);
+      const result = await response.data;
+      // console.log(result);
+      setCategories([...categories, result]);
+      inputAddFormik.resetForm();
+      Swal.fire('Thêm thành công', '', 'success');
+    } catch (error) {
+      const { status } = error.response;
+      if (status === 500) {
+        Swal.fire('Thêm thất bại', '', 'error');
+      } else {
+        console.error('status: ' + status);
+        Swal.fire('Có lỗi xảy ra', `status code ${status}`, 'error');
+      }
+    }
   };
 
   // handle click on edit button
-  const handleShowViewEdit = (id) => {
-    axiosInstent
-      .get(`${pathApi.categories}/${id}`)
-      .then((response) => {
-        // console.log(response.data);
-        const category = response.data;
-        setInputEditCategory((prev) => ({
-          ...prev,
-          categoryId: category.categoryId,
-          categoryName: category.categoryName,
-        }));
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+  const handleShowViewEdit = async (id) => {
+    try {
+      const response = await axiosInstent.get(`${pathApi.categories}/${id}`);
+      const { categoryId, categoryName } = await response.data;
+      // console.log(response.data);
+      // setInputEditCategory({ ...inputEditCategory, ...category });
+      inputAddFormik.setFieldValue('categoryId', categoryId);
+      inputAddFormik.setFieldValue('categoryName', categoryName);
+      setStatusModal('Edit');
+    } catch (error) {
+      const { status } = error.response;
+      console.error('status: ' + status);
+      Swal.fire('Có lỗi xảy ra', `status code ${status}`, 'error');
+    }
   };
 
   // handle click on edit button
-  const handleClickEdit = () => {
-    const dataCategory = {
-      categoryId: inputEditCategory.categoryId,
-      categoryName: inputEditCategory.categoryName,
-    };
-    // console.log('id', dataCategory);
+  const handleClickEdit = async (dataCategory) => {
+    // console.log('dataCategory', dataCategory);
+    try {
+      const response = await axiosInstent.put(pathApi.categories, dataCategory);
+      const result = response.data;
 
-    axiosInstent.put(pathApi.categories, dataCategory).then((response) => {
-      // console.log(response);
-      Swal.fire({
-        title: 'Cập nhật thành công',
-        icon: 'success',
-      });
-      callApiGetAllCategories();
-    });
+      // update categories
+      const newCategories = categories.map((category) =>
+        category.categoryId === result.categoryId ? result : category
+      );
+
+      setCategories(newCategories);
+      Swal.fire('Cập nhật thành công', '', 'success');
+    } catch (error) {
+      const { status } = error.response;
+      if (status === 500) {
+        Swal.fire('Cập nhật thất bại', '', 'error');
+      } else {
+        console.error('Status code:', status);
+        Swal.fire('Đã có lỗi xảy ra', '', 'error');
+      }
+    }
   };
 
   // handle click on delete button
@@ -175,56 +201,51 @@ export default function CategoryList() {
   };
 
   return (
-    <div className='container-fluid'>
-      <h1 className='h2 my-5 text-gray-800'>Category list</h1>
-      <div className='card shadow mb-4'>
-        <div className='card-header py-3'>
-          <button
-            className='btn btn-success btn-icon-split'
-            data-bs-toggle='modal'
-            data-bs-target='#modalAddCategory'
-          >
-            <span className='icon text-white-50'>
-              <i className='fas fa-plus'></i>
-            </span>
-            <span className='text'>Add new</span>
-          </button>
+    <>
+      <div className='container-fluid'>
+        <h1 className='h2 my-5 text-gray-800'>Category list</h1>
+        <div className='card shadow mb-4'>
+          <div className='card-header py-3'>
+            <button
+              className='btn btn-success btn-icon-split'
+              data-bs-toggle='modal'
+              data-bs-target='#modalAddCategory'
+              onClick={() => setStatusModal('Add')}
+            >
+              <span className='icon text-white-50'>
+                <i className='fas fa-plus'></i>
+              </span>
+              <span className='text'>Add new</span>
+            </button>
+          </div>
+          <div className='card-body'>
+            <table
+              className='table table-bordered mx-auto'
+              style={{ width: '1000px' }}
+            >
+              <thead>
+                <tr role='row'>
+                  <th width='100px'>Id</th>
+                  <th style={{ width: '70%' }}>Name</th>
+                  <th
+                    colSpan={2}
+                    className='text-center'
+                  >
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody>{renderCategories()}</tbody>
+            </table>
+          </div>
         </div>
-        <div className='card-body'>
-          <table
-            className='table table-bordered mx-auto'
-            style={{ width: '1000px' }}
-          >
-            <thead>
-              <tr role='row'>
-                <th width='100px'>Id</th>
-                <th style={{ width: '70%' }}>Name</th>
-                <th
-                  colSpan={2}
-                  className='text-center'
-                >
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>{renderCategories()}</tbody>
-          </table>
-        </div>
+
+        {/* modal add new category */}
+        <CategoryModal
+          inputAddFormik={inputAddFormik}
+          statusModal={statusModal}
+        />
       </div>
-
-      {/* modal add new category */}
-      <CategoryAdd
-        inputAddCategory={inputAddCategory}
-        setInputAddCategory={setInputAddCategory}
-        handleClickAdd={handleClickAdd}
-      />
-
-      {/* modal edit category */}
-      <CategoryEdit
-        inputEditCategory={inputEditCategory}
-        setInputEditCategory={setInputEditCategory}
-        handleClickEdit={handleClickEdit}
-      />
-    </div>
+    </>
   );
 }

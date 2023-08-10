@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import axiosInstent, { pathApi } from '~/config/axiosCustom';
-import { formatPrice } from '~/common/properties';
+import axiosInstent, { pathApi } from '../../../config/axiosCustom';
+import { formatPrice } from '../../../common/properties';
 
 export default function OrderDetailAdmin() {
   const navigate = useNavigate();

@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { text, link } from '~/common/properties';
-import { path } from '~/router/router';
-import { AppContext } from '~/context/contextApp';
+import { text, link } from '../../../common/properties';
+import { path } from '../../../router/router';
+import { AppContext } from '../../../context/contextApp';
 
 export default function Header() {
   const { appContext, appContextDispatch } = useContext(AppContext);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { adminPath } from '~/router/router';
+import { adminPath } from '../../../router/router';
 
 const navs = [
   {

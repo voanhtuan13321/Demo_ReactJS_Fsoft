@@ -2,9 +2,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import { path } from '~/router/router';
-import axiosInstent, { pathApi } from '~/config/axiosCustom';
-import { AppContext } from '~/context/contextApp';
+import { path } from '../../../router/router';
+import axiosInstent, { pathApi } from '../../../config/axiosCustom';
+import { AppContext } from '../../../context/contextApp';
 
 export default function Login() {
   const [inputUser, setInputUser] = useState({

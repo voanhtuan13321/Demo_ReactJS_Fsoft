@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import Navbar from '~/components/admin/layout/Navbar';
+import Navbar from './layout/Navbar';
 
 export default function Admin() {
   const navigate = useNavigate();

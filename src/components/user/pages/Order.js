@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import axiosInstent, { pathApi } from '~/config/axiosCustom';
+import axiosInstent, { pathApi } from '../../../config/axiosCustom';
 
 export default function Order() {
   const navigate = useNavigate();

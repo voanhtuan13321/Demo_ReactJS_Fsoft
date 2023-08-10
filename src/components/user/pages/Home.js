@@ -2,11 +2,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import { path } from '~/router/router';
-import axiosInstent, { pathApi } from '~/config/axiosCustom';
-import { AppContext } from '~/context/contextApp';
-import { handleAddProductToCart } from '~/common/properties';
-import CardBook from '~/components/user/pages/CardBook';
+import { path } from '../../../router/router';
+import axiosInstent, { pathApi } from '../../../config/axiosCustom';
+import { AppContext } from '../../../context/contextApp';
+import { handleAddProductToCart } from '../../../common/properties';
+import CardBook from './CardBook';
 
 export default function Home() {
   const [idDanhMuc, setIdDanhMuc] = useState(undefined);

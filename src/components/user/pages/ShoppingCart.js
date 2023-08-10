@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import { formatPrice } from '~/common/properties';
-import axiosInstent, { pathApi } from '~/config/axiosCustom';
-import { AppContext } from '~/context/contextApp';
-import CardCart from '~/components/user/pages/CardCart';
+import { formatPrice } from '../../../common/properties';
+import axiosInstent, { pathApi } from '../../../config/axiosCustom';
+import { AppContext } from '../../../context/contextApp';
+import CardCart from './CardCart';
 
 export default function ShoppingCart() {
   const [idUser, setIdUser] = useState(undefined);

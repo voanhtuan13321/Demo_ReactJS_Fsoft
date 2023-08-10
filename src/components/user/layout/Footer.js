@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { text, link } from '~/common/properties';
-import { path } from '~/router/router';
+import { text, link } from '../../../common/properties';
+import { path } from '../../../router/router';
 
 export default function Footer() {
   return (

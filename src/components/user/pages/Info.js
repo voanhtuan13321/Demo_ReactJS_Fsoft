@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-import axiosInstent, { pathApi } from '~/config/axiosCustom';
-import InforEdit from '~/components/user/modal/InfoEdit.js';
+import axiosInstent, { pathApi } from '../../../config/axiosCustom';
+import InforEdit from '../modal/InfoEdit';
 
 export default function Info() {
   const [infoUser, setInfoUser] = useState({
