@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
@@ -9,25 +9,43 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    window.document.title = 'Login';
+  }, []);
+
   // handle Click Sign In
   const handleClickSignIn = async () => {
-    // check exist email
-    const responseCheckEmail = await axiosInstent.get(`${pathApi.admin}/${email}`);
-    if (!responseCheckEmail.data) {
-      Swal.fire({
-        title: 'Email không tồn tại',
-        icon: 'error',
-      });
+    try {
+      // check exist email
+      await axiosInstent.get(`${pathApi.admin}/${email}`);
+    } catch (error) {
+      const { status } = error.response;
+      if (status === 404) {
+        // console.error('Status code:', status, 'email not found');
+        Swal.fire('Email không đúng', '', 'error');
+      } else {
+        console.error('Status code:', status);
+        Swal.fire('Đã có lỗi xảy ra', '', 'error');
+      }
       return;
     }
 
     // check login
     const dataAdmin = { email, password };
-    const responseCheckLogin = await axiosInstent.post(`${pathApi.admin}/check`, dataAdmin);
-    const idAdmin = await responseCheckLogin.data;
-    if (idAdmin) {
+    try {
+      const responseCheckLogin = await axiosInstent.post(`${pathApi.admin}/check`, dataAdmin);
+      const idAdmin = await responseCheckLogin.data;
+      // console.log(idAdmin);
       window.localStorage.setItem('idAdmin', idAdmin);
       navigate('../admin/order-list');
+    } catch (error) {
+      const { status } = error.response;
+      if (status === 404) {
+        Swal.fire('Mật khẩu không đúng', '', 'error');
+      } else {
+        console.error('Status code:', status);
+        Swal.fire('Đã có lỗi xảy ra', '', 'error');
+      }
     }
   };
 

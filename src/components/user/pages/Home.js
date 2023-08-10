@@ -52,19 +52,23 @@ export default function Home() {
 
   // render book
   const renderBook = (id) => {
-    return books.map((book) => {
-      return (
-        <div
-          className='col-md-3 mb-4'
-          key={book.bookId}
-        >
-          <CardBook
-            book={book}
-            handleAddCart={handleAddCart}
-          />
-        </div>
-      );
-    });
+    return books.length === 0 ? (
+      <h3 className='text-center'>Không có sản phẩm nào</h3>
+    ) : (
+      books.map((book) => {
+        return (
+          <div
+            className='col-md-3 mb-4'
+            key={book.bookId}
+          >
+            <CardBook
+              book={book}
+              handleAddCart={handleAddCart}
+            />
+          </div>
+        );
+      })
+    );
   };
 
   // render options

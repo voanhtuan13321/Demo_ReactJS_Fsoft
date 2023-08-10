@@ -18,7 +18,7 @@ function App() {
   useEffect(() => {
     const idUser = window.localStorage.getItem('idUser');
     appContextDispatch({ type: 'ADD_ID_USER', data: idUser });
-    getProductsInCartFromApi(idUser);
+    idUser && getProductsInCartFromApi(idUser);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
