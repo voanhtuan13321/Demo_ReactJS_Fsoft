@@ -1,239 +1,154 @@
 import React, { useEffect, useState } from 'react';
+import { Modal, Button, Form, Col, Row } from 'react-bootstrap';
 
-export default function BookAdd({ resetBooks, inputAddBook, setInputAddBook, renderOptions, addButtonClick }) {
-  const [base64String, setBase64String] = useState('https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg');
+const INIT_IMAGE = 'https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg';
+
+export default function BookAdd({ renderOptions, formik, show, onHide, statusModal }) {
+  const [base64String, setBase64String] = useState(INIT_IMAGE);
 
   useEffect(() => {
-    if (!inputAddBook.image) {
-      setBase64String('https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg');
+    const { image } = formik.values;
+    if (!image) {
+      setBase64String(INIT_IMAGE);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    } else {
+      image && setBase64String(image);
     }
-  }, [inputAddBook]);
+  }, [formik.values]);
 
   const handleOnChangeImage = (e) => {
     const file = e.target.files[0];
-    setInputAddBook((prev) => ({
-      ...prev,
-      image: file,
-    }));
+    formik.setFieldValue('image', file);
 
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result;
-        setBase64String(base64String);
-      };
+      reader.onloadend = () => setBase64String(reader.result);
       reader.readAsDataURL(file);
     }
   };
 
   return (
-    <>
-      <div
-        className='modal fade'
-        id='modalAddNewBook'
-        data-bs-backdrop='static'
-        data-bs-keyboard='false'
-        tabIndex='-1'
-        aria-labelledby='staticBackdropLabel'
-        aria-hidden='true'
-      >
-        <div className='modal-dialog'>
-          <div className='modal-content'>
-            <div className='modal-header'>
-              <h5
-                className='modal-title text-dark fw-bold'
-                id='staticBackdropLabel'
-              >
-                Thêm mới
-              </h5>
-              <button
-                type='button'
-                className='btn-close'
-                data-bs-dismiss='modal'
-                aria-label='Close'
-                onClick={resetBooks}
-              ></button>
-            </div>
-            <div className='modal-body'>
-              <div className='mb-3'>
-                <select
-                  className='form-select'
-                  aria-label='Default select example'
-                  value={inputAddBook.categoryId}
-                  onChange={(e) =>
-                    setInputAddBook((prev) => ({
-                      ...prev,
-                      categoryId: e.target.value,
-                    }))
-                  }
-                >
-                  {renderOptions()}
-                </select>
-              </div>
+    <Modal
+      show={show}
+      onHide={onHide}
+      backdrop='static'
+      size='lg'
+    >
+      <Form onSubmit={formik.handleSubmit}>
+        <Modal.Header>
+          <Modal.Title className='text-dark fw-bold mx-auto h3'>Thêm mới</Modal.Title>
+        </Modal.Header>
 
-              <div className='mb-3'>
-                <label
-                  htmlFor='addBookTitle'
-                  className='form-label'
-                >
-                  Book Title
-                </label>
-                <input
-                  type='text'
-                  placeholder='Title'
-                  className='form-control'
-                  id='addBookTitle'
-                  value={inputAddBook.title}
-                  onChange={(e) =>
-                    setInputAddBook((prev) => ({
-                      ...prev,
-                      title: e.target.value,
-                    }))
-                  }
+        <Modal.Body>
+          <Form.Group className='mb-3'>
+            <Row>
+              <Col>
+                <Form.Label>Book Title</Form.Label>
+                <Form.Control
+                  placeholder='Book Title'
+                  {...formik.getFieldProps('title')}
                 />
-              </div>
-
-              <div className='mb-3'>
-                <label
-                  htmlFor='addBookAuthor'
-                  className='form-label'
-                >
-                  Author
-                </label>
-                <input
-                  type='text'
-                  placeholder='Author'
-                  className='form-control'
-                  id='addBookAuthor'
-                  value={inputAddBook.author}
-                  onChange={(e) =>
-                    setInputAddBook((prev) => ({
-                      ...prev,
-                      author: e.target.value,
-                    }))
-                  }
+                <Form.Text className='text-danger'>{formik.errors.title}</Form.Text>
+              </Col>
+              <Col>
+                <Form.Label>Book Author</Form.Label>
+                <Form.Control
+                  placeholder='Book Author'
+                  {...formik.getFieldProps('author')}
                 />
-              </div>
+                <Form.Text className='text-danger'>{formik.errors.author}</Form.Text>
+              </Col>
+            </Row>
+          </Form.Group>
 
-              <div className='mb-3'>
-                <label
-                  htmlFor='addBookDecription'
-                  className='form-label'
-                >
-                  Decription
-                </label>
-                <textarea
+          <Form.Group className='mb-3'>
+            <Form.Label>Book description</Form.Label>
+            <Form.Control
+              as='textarea'
+              rows={3}
+              placeholder='Description'
+              {...formik.getFieldProps('description')}
+            />
+            <Form.Text className='text-danger'>{formik.errors.description}</Form.Text>
+          </Form.Group>
+
+          <Form.Group className='mb-3'>
+            <Row>
+              <Col>
+                <Form.Label>Category</Form.Label>
+                <Form.Select {...formik.getFieldProps('categoryId')}>{renderOptions()}</Form.Select>
+                <Form.Text className='text-danger'>{formik.errors.categoryId}</Form.Text>
+              </Col>
+              <Col>
+                <Form.Label>Price</Form.Label>
+                <Form.Control
+                  size='sm'
+                  type='number'
                   className='form-control'
-                  placeholder='description'
-                  id='addBookDecription'
-                  value={inputAddBook.description}
-                  onChange={(e) =>
-                    setInputAddBook((prev) => ({
-                      ...prev,
-                      description: e.target.value,
-                    }))
-                  }
-                ></textarea>
-              </div>
+                  min={0}
+                  {...formik.getFieldProps('price')}
+                />
+                <Form.Text className='text-danger'>{formik.errors.price}</Form.Text>
+              </Col>
+              <Col>
+                <Form.Label>Quantity</Form.Label>
+                <Form.Control
+                  size='sm'
+                  type='number'
+                  className='form-control'
+                  min={0}
+                  {...formik.getFieldProps('quantity')}
+                />
+                <Form.Text className='text-danger'>{formik.errors.quantity}</Form.Text>
+              </Col>
+            </Row>
+          </Form.Group>
 
-              <div className='mb-3'>
-                <div className='row'>
-                  <div className='col'>
-                    <label
-                      htmlFor='addBookPrice'
-                      className='form-label'
-                    >
-                      Price
-                    </label>
-                    <input
-                      id='addBookPrice'
-                      type='number'
-                      className='form-control'
-                      value={inputAddBook.price}
-                      min={0}
-                      onChange={(e) =>
-                        setInputAddBook((prev) => ({
-                          ...prev,
-                          price: e.target.value,
-                        }))
-                      }
-                    />
-                  </div>
-                  <div className='col'>
-                    <label
-                      htmlFor='addBookQuantity'
-                      className='form-label'
-                    >
-                      Quantity
-                    </label>
-                    <input
-                      id='addBookQuantity'
-                      type='number'
-                      className='form-control'
-                      value={inputAddBook.quantity}
-                      min={0}
-                      onChange={(e) =>
-                        setInputAddBook((prev) => ({
-                          ...prev,
-                          quantity: e.target.value,
-                        }))
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
+          <Form.Group
+            className='mb-3 text-center overflow-hidden mx-auto'
+            style={{ width: '200px' }}
+          >
+            <img
+              src={base64String}
+              alt='hinh anh'
+              style={{ width: '100%' }}
+            />
+            <Form.Label
+              htmlFor='customFile2'
+              className='btn btn-info btn-sm mt-3'
+            >
+              Choose file
+            </Form.Label>
+            <Form.Text className='text-danger'>{formik.errors.image}</Form.Text>
+            <Form.Control
+              size='sm'
+              type='file'
+              className='form-control d-none'
+              id='customFile2'
+              onChange={(e) => handleOnChangeImage(e)}
+            />
+          </Form.Group>
+        </Modal.Body>
 
-              <div className='mb-3'>
-                <div
-                  className='d-flex justify-content-center mb-4 overflow-hidden mx-auto'
-                  style={{ width: '200px', height: '200px' }}
-                >
-                  <img
-                    src={base64String}
-                    alt='hinh anh'
-                    style={{ width: '100%' }}
-                  />
-                </div>
-                <div className='d-flex justify-content-center'>
-                  <div className='btn btn-info btn-rounded'>
-                    <label
-                      className='form-label text-white m-1'
-                      htmlFor='customFile2'
-                      style={{ cursor: 'pointer' }}
-                    >
-                      Choose file
-                    </label>
-                    <input
-                      type='file'
-                      className='form-control d-none'
-                      id='customFile2'
-                      onChange={(e) => handleOnChangeImage(e)}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className='modal-footer'>
-              <button
-                type='button'
-                className='btn btn-success'
-                data-bs-dismiss='modal'
-                onClick={addButtonClick}
-              >
-                Add
-              </button>
-              <button
-                type='button'
-                className='btn btn-secondary'
-                data-bs-dismiss='modal'
-                onClick={resetBooks}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
+        <Modal.Footer>
+          <Button
+            variant='success'
+            type='submit'
+          >
+            Add
+          </Button>
+          <Button
+            variant='secondary'
+            onClick={() => {
+              formik.resetForm();
+              setBase64String(INIT_IMAGE);
+              onHide();
+            }}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Form>
+    </Modal>
   );
 }

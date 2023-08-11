@@ -1,6 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { Button, Card, Container, Form, Table } from 'react-bootstrap';
 
 import axiosInstent, { pathApi } from '../../../config/axiosCustom';
 import BookAdd from '../../admin/modal/BookAdd';
@@ -8,19 +11,12 @@ import BookEdit from '../../admin/modal/BookEdit';
 import { AppContext } from '../../../context/contextApp';
 
 export default function BookList() {
+  const [showModal, setShowModal] = useState(false);
+  const [showModalEdit, setShowModalEdit] = useState(false);
   const [idDanhMuc, setIdDanhMuc] = useState(undefined);
   const [search, setSearch] = useState('');
   const [categories, setCategories] = useState([]);
   const [books, setBooks] = useState([]);
-  const [inputAddBook, setInputAddBook] = useState({
-    categoryId: 0,
-    title: '',
-    author: '',
-    description: '',
-    image: null,
-    price: 0,
-    quantity: 0,
-  });
   const [inputEditBook, setInputEditBook] = useState({
     bookId: 0,
     categoryId: 0,
@@ -31,6 +27,30 @@ export default function BookList() {
     price: 0,
     quantity: 0,
   });
+  const formik = useFormik({
+    initialValues: {
+      bookId: 0,
+      categoryId: 0,
+      title: '',
+      author: '',
+      description: '',
+      image: null,
+      price: 0,
+      quantity: 0,
+    },
+    validationSchema: Yup.object({
+      categoryId: Yup.number().notOneOf([0], 'Phải chọn danh mục'),
+      title: Yup.string().required('Title không được để trống'),
+      author: Yup.string().required('Author không được để trống'),
+      description: Yup.string().required('Decription không được để trống'),
+      image: Yup.string().nonNullable('Bạn phải chọn file'),
+      price: Yup.number().min(10000, 'Phải nhập ít nhất là 10,000đ').required('Phải nhập giá'),
+      quantity: Yup.number().min(1, 'Số lượng ít nhất là 1').required('Phải nhập số lượng'),
+    }),
+    onSubmit: (values) => {
+      addButtonClick(values);
+    },
+  });
   const navigate = useNavigate();
   const { appContext } = useContext(AppContext);
 
@@ -38,10 +58,7 @@ export default function BookList() {
     const idAdmin = window.localStorage.getItem('idAdmin');
     if (!idAdmin) {
       navigate('../../admin/login');
-      Swal.fire({
-        title: 'Bạn phải đăng nhập',
-        icon: 'info',
-      });
+      Swal.fire('Bạn phải đăng nhập', '', 'info');
       return;
     }
 
@@ -61,25 +78,27 @@ export default function BookList() {
     callApiGetAllBooks();
   }, [appContext, navigate]);
 
+  const handleShowModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+  const handleShowModalEdit = () => {
+    setShowModalEdit(true);
+  };
+
+  const handleCloseModalEdit = () => {
+    setShowModalEdit(false);
+  };
+
   // call Api Get All Books
   const callApiGetAllBooks = async () => {
     const response = await axiosInstent.get(pathApi.products);
     const dataBook = await response.data;
     // console.log('books:', dataBook);
     setBooks(dataBook);
-  };
-
-  // reset data in add book form
-  const resetBooks = () => {
-    setInputAddBook({
-      categoryId: 0,
-      title: '',
-      author: '',
-      description: '',
-      image: null,
-      price: 0,
-      quantity: 0,
-    });
   };
 
   // render options
@@ -100,24 +119,18 @@ export default function BookList() {
   };
 
   // handle click on add button
-  const addButtonClick = () => {
+  const addButtonClick = async (inputAddBook) => {
     // console.log(inputAddBook);
     const formDataBook = convertToFormData(inputAddBook);
-
-    axiosInstent
-      .post(pathApi.products, formDataBook)
-      .then((response) => {
-        // console.log(response);
-        Swal.fire({
-          title: 'Thêm thành công',
-          icon: 'success',
-        });
-        callApiGetAllBooks();
-        resetBooks();
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    try {
+      await axiosInstent.post(pathApi.products, formDataBook);
+      Swal.fire('Thêm thành công', '', 'success');
+      callApiGetAllBooks();
+      handleCloseModal();
+      formik.resetForm();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // convert to form data
@@ -137,43 +150,32 @@ export default function BookList() {
   // show Edit Book
   const showEditBook = (book) => {
     setInputEditBook(book);
+    handleShowModalEdit();
   };
 
   // const handle click on edit button
-  const handleEditBookClick = () => {
+  const handleEditBookClick = async () => {
     // console.log('test', inputEditBook);
     const formDataBook = convertToFormData(inputEditBook);
-    axiosInstent
-      .put(pathApi.products, formDataBook)
-      .then((response) => {
-        // console.log(response);
-        Swal.fire({
-          title: 'Cập nhật thành công',
-          icon: 'success',
-        });
-        callApiGetAllBooks();
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    try {
+      await axiosInstent.put(pathApi.products, formDataBook);
+      Swal.fire('Cập nhật thành công', '', 'success');
+      callApiGetAllBooks();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // const handle click delete button
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     // console.log(id);
-    axiosInstent
-      .delete(`${pathApi.products}/${id}`)
-      .then((response) => {
-        // console.log(response);
-        Swal.fire({
-          title: 'Xoá thành công',
-          icon: 'success',
-        });
-        callApiGetAllBooks();
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    try {
+      await axiosInstent.delete(`${pathApi.products}/${id}`);
+      Swal.fire('Xoá thành công', '', 'success');
+      callApiGetAllBooks();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // renders the books
@@ -204,28 +206,26 @@ export default function BookList() {
             <td>{book.price}</td>
             <td>{book.quantity}</td>
             <td>
-              <button
-                className='btn btn-sm btn-info btn-icon-split'
-                data-bs-toggle='modal'
-                data-bs-target='#modalEditBook'
+              <Button
+                className='btn-icon-split btn-sm'
                 onClick={() => showEditBook(book)}
               >
-                <span className='icon text-white-50'>
+                <span className='icon'>
                   <i className='fas fa-pen'></i>
                 </span>
                 <span className='text'>Edit</span>
-              </button>
+              </Button>
             </td>
             <td>
-              <button
-                className='btn btn-sm btn-danger btn-icon-split'
+              <Button
+                className='btn-icon-split btn-danger btn-sm'
                 onClick={() => handleDelete(book.bookId)}
               >
-                <span className='icon text-white-50'>
+                <span className='icon'>
                   <i className='fas fa-trash'></i>
                 </span>
                 <span className='text'>Delete</span>
-              </button>
+              </Button>
             </td>
           </tr>
         );
@@ -264,45 +264,52 @@ export default function BookList() {
   };
 
   return (
-    <div className='container-fluid'>
+    <Container fluid>
       <h1 className='h2 my-5 text-gray-800'>Books list</h1>
       <div className='card shadow mb-4'>
-        <div className='card-header py-3 d-flex'>
-          <button
-            className='btn btn-success btn-icon-split'
-            data-bs-toggle='modal'
-            data-bs-target='#modalAddNewBook'
+        <Card.Header className='py-3 d-flex'>
+          <Button
+            className='btn-icon-split btn-success'
+            onClick={handleShowModal}
           >
-            <span className='icon text-white-50'>
-              <i className='fas fa-plus'></i>
+            <span
+              className='icon'
+              style={{ paddingTop: '8px' }}
+            >
+              <i className='fas fa-plus' />
             </span>
-            <span className='text'>Add new</span>
-          </button>
-          <select
-            className='form-select ml-3'
+            <span
+              className='text'
+              style={{ paddingTop: '8px' }}
+            >
+              Add new
+            </span>
+          </Button>
+          <Form.Select
+            className='ml-3'
             style={{ width: '200px' }}
             onChange={handleSelect}
             value={idDanhMuc} // Giá trị idDanhMuc hiện tại để chọn mặc định
           >
             {renderOptions()}
-          </select>
-          <input
-            className='form-control ml-3'
-            type='text'
+          </Form.Select>
+          <Form.Control
+            className='ml-3'
             style={{ width: '500px' }}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder='Nhập từ khoá tìm kiếm ...'
           />
-          <button
+          <Button
             className='btn btn-info ml-3'
             onClick={handleSearch}
           >
             Tìm kiếm
-          </button>
-        </div>
-        <div className='card-body'>
-          <table className='table table-sm table-bordered mx-auto'>
+          </Button>
+        </Card.Header>
+
+        <Card.Body>
+          <Table className='table-sm table-bordered mx-auto'>
             <thead>
               <tr role='row'>
                 <th width='100px'>Id</th>
@@ -325,17 +332,16 @@ export default function BookList() {
               </tr>
             </thead>
             <tbody>{renderBooks()}</tbody>
-          </table>
-        </div>
+          </Table>
+        </Card.Body>
       </div>
 
       {/* modal add new category */}
       <BookAdd
-        resetBooks={resetBooks}
-        inputAddBook={inputAddBook}
-        setInputAddBook={setInputAddBook}
+        show={showModal}
+        onHide={handleCloseModal}
         renderOptions={renderOptions}
-        addButtonClick={addButtonClick}
+        formik={formik}
       />
 
       {/* modal edit */}
@@ -344,7 +350,9 @@ export default function BookList() {
         setInputEditBook={setInputEditBook}
         handleEditBookClick={handleEditBookClick}
         renderOptions={renderOptions}
+        showEdit={showModalEdit}
+        onHideEdit={handleCloseModalEdit}
       />
-    </div>
+    </Container>
   );
 }

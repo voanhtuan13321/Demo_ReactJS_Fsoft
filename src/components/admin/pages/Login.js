@@ -10,17 +10,16 @@ export default function Login() {
   const refEmail = useRef(null);
   const refPass = useRef(null);
   const navigate = useNavigate();
-  const validationSchema = Yup.object({
-    email: Yup.string()
-      .required('Tài khoản không được để trống')
-      .max(50, 'Không được nhập quá 50 ký tự'),
-    password: Yup.string()
-      .required('Mật khẩu không được để trống')
-      .max(50, 'Không được nhập quá 50 ký tự'),
-  });
   const formik = useFormik({
     initialValues: { email: '', password: '' },
-    validationSchema,
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .required('Tài khoản không được để trống')
+        .max(50, 'Không được nhập quá 50 ký tự'),
+      password: Yup.string()
+        .required('Mật khẩu không được để trống')
+        .max(50, 'Không được nhập quá 50 ký tự'),
+    }),
     onSubmit: (values) => {
       handleSubmit(values);
     },

@@ -1,73 +1,41 @@
 import React from 'react';
+import { Modal, Form, Button } from 'react-bootstrap';
 
-export default function CategoryModal({ inputAddFormik, statusModal }) {
+export default function CategoryModal({ formik, statusModal, show, onHide }) {
   return (
-    <>
-      <div
-        className='modal fade'
-        id='modalAddCategory'
-        data-bs-backdrop='static'
-        data-bs-keyboard='false'
-        tabIndex='-1'
-        aria-labelledby='staticBackdropLabel'
-        aria-hidden='true'
-      >
-        <form
-          onSubmit={inputAddFormik.handleSubmit}
-          className='modal-dialog'
-        >
-          <div className='modal-content'>
-            <div className='modal-header'>
-              <h5
-                className='modal-title text-dark fw-bold'
-                id='staticBackdropLabel'
-              >
-                Thêm mới
-              </h5>
-              <button
-                className='btn-close'
-                data-bs-dismiss='modal'
-                aria-label='Close'
-                onClick={inputAddFormik.resetForm}
-              ></button>
-            </div>
-            <div className='modal-body'>
-              <div className='mb-3'>
-                <label
-                  htmlFor='addInputCategoryName'
-                  className='form-label'
-                >
-                  Category Name
-                </label>
-                <input
-                  type='text'
-                  className='form-control'
-                  id='addInputCategoryName'
-                  {...inputAddFormik.getFieldProps('categoryName')}
-                />
-                {inputAddFormik.errors.categoryName && (
-                  <p className='text-danger mt-2'>{inputAddFormik.errors.categoryName}</p>
-                )}
-              </div>
-            </div>
-            <div className='modal-footer'>
-              <button
-                className='btn btn-success'
-                data-bs-dismiss='modal'
-              >
-                {statusModal ?? ''}
-              </button>
-              <button
-                className='btn btn-secondary'
-                data-bs-dismiss='modal'
-                onClick={inputAddFormik.resetForm}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </>
+    <Modal
+      show={show}
+      onHide={onHide}
+      backdrop='static'
+    >
+      <Form onSubmit={formik.handleSubmit}>
+        <Modal.Header>
+          <Modal.Title className='text-dark fw-bold mx-auto h3'>{statusModal}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group className='mb-3'>
+            <Form.Label>Category Name</Form.Label>
+            <Form.Control {...formik.getFieldProps('categoryName')} />
+            {formik.errors.categoryName && (
+              <p className='text-danger mt-2'>{formik.errors.categoryName}</p>
+            )}
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            type='submit'
+            variant='success'
+          >
+            {statusModal ?? ''}
+          </Button>
+          <Button
+            variant='secondary'
+            onClick={onHide}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Form>
+    </Modal>
   );
 }

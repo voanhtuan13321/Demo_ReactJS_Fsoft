@@ -3,14 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { Button } from 'react-bootstrap';
 
 import axiosInstent, { pathApi } from '../../../config/axiosCustom';
 import CategoryModal from '../modal/CategoryModal';
 
 export default function CategoryList() {
+  const [showModal, setShowModal] = useState(false);
   const [statusModal, setStatusModal] = useState(undefined);
   const [categories, setCategories] = useState([]);
-  const inputAddFormik = useFormik({
+  const formik = useFormik({
     initialValues: {
       categoryName: '',
     },
@@ -47,6 +49,15 @@ export default function CategoryList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleShowModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    formik.resetForm();
+  };
+
   // call api get all categories
   const callApiGetAllCategories = async () => {
     try {
@@ -79,17 +90,27 @@ export default function CategoryList() {
             <td className='sorting_1'>{category.categoryId}</td>
             <td>{category.categoryName}</td>
             <td>
-              <button
-                className='btn btn-sm btn-info btn-icon-split'
-                data-bs-toggle='modal'
-                data-bs-target='#modalAddCategory'
-                onClick={() => handleShowViewEdit(category.categoryId)}
+              <Button
+                variant='info'
+                className='btn-icon-split btn-sm'
+                onClick={() => {
+                  handleShowModal();
+                  handleShowViewEdit(category.categoryId);
+                }}
               >
-                <span className='icon text-white-50'>
-                  <i className='fas fa-pen'></i>
+                <span
+                  className='icon'
+                  // style={{ paddingTop: '8px' }}
+                >
+                  <i className='fas fa-plus'></i>
                 </span>
-                <span className='text'>Edit</span>
-              </button>
+                <span
+                  className='text'
+                  // style={{ paddingTop: '8px' }}
+                >
+                  Edit
+                </span>
+              </Button>
             </td>
             <td>
               <button
@@ -115,7 +136,7 @@ export default function CategoryList() {
       const result = await response.data;
       // console.log(result);
       setCategories([...categories, result]);
-      inputAddFormik.resetForm();
+      formik.resetForm();
       Swal.fire('Thêm thành công', '', 'success');
     } catch (error) {
       const { status } = error.response;
@@ -135,8 +156,8 @@ export default function CategoryList() {
       const { categoryId, categoryName } = await response.data;
       // console.log(response.data);
       // setInputEditCategory({ ...inputEditCategory, ...category });
-      inputAddFormik.setFieldValue('categoryId', categoryId);
-      inputAddFormik.setFieldValue('categoryName', categoryName);
+      formik.setFieldValue('categoryId', categoryId);
+      formik.setFieldValue('categoryName', categoryName);
       setStatusModal('Edit');
     } catch (error) {
       const { status } = error.response;
@@ -206,17 +227,27 @@ export default function CategoryList() {
         <h1 className='h2 my-5 text-gray-800'>Category list</h1>
         <div className='card shadow mb-4'>
           <div className='card-header py-3'>
-            <button
-              className='btn btn-success btn-icon-split'
-              data-bs-toggle='modal'
-              data-bs-target='#modalAddCategory'
-              onClick={() => setStatusModal('Add')}
+            <Button
+              variant='success'
+              className='btn-icon-split'
+              onClick={() => {
+                handleShowModal();
+                setStatusModal('Add');
+              }}
             >
-              <span className='icon text-white-50'>
+              <span
+                className='icon'
+                style={{ paddingTop: '8px' }}
+              >
                 <i className='fas fa-plus'></i>
               </span>
-              <span className='text'>Add new</span>
-            </button>
+              <span
+                className='text'
+                style={{ paddingTop: '8px' }}
+              >
+                Add new
+              </span>
+            </Button>
           </div>
           <div className='card-body'>
             <table
@@ -242,8 +273,10 @@ export default function CategoryList() {
 
         {/* modal add new category */}
         <CategoryModal
-          inputAddFormik={inputAddFormik}
+          formik={formik}
           statusModal={statusModal}
+          show={showModal}
+          onHide={handleCloseModal}
         />
       </div>
     </>
