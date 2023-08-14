@@ -3,10 +3,14 @@ import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import * as Yup from 'yup';
+import { Button, FloatingLabel, Form } from 'react-bootstrap';
 
 import axiosInstent, { pathApi } from '../../../config/axiosCustom';
+import { AppContext } from '../../../context/contextApp';
+import { useContext } from 'react';
 
 export default function Login() {
+  const { appContextDispatch } = useContext(AppContext);
   const refEmail = useRef(null);
   const refPass = useRef(null);
   const navigate = useNavigate();
@@ -31,6 +35,7 @@ export default function Login() {
 
   // handle Click Sign In
   const handleSubmit = async ({ email, password }) => {
+    appContextDispatch({ type: 'SET_LOADING', data: true });
     try {
       // check exist email
       await axiosInstent.get(`${pathApi.admin}/${email}`);
@@ -38,12 +43,13 @@ export default function Login() {
       const { status } = error.response;
       if (status === 404) {
         // console.error('Status code:', status, 'email not found');
-        Swal.fire('Email không đúng', '', 'error');
+        Swal.fire('Tài khoản không đúng', '', 'error');
       } else {
         console.error('Status code:', status);
         Swal.fire('Đã có lỗi xảy ra', '', 'error');
       }
       refEmail.current.focus();
+      appContextDispatch({ type: 'SET_LOADING', data: false });
       return;
     }
 
@@ -64,59 +70,45 @@ export default function Login() {
         Swal.fire('Đã có lỗi xảy ra', '', 'error');
       }
     }
+    appContextDispatch({ type: 'SET_LOADING', data: false });
   };
 
   return (
     <>
-      <form
+      <Form
         className='mx-auto'
         style={{ width: '500px' }}
         onSubmit={formik.handleSubmit}
       >
         <h1 className='text-center my-5'>LOGIN</h1>
 
-        <div className='form-outline mb-4'>
-          <label
-            className='form-label'
-            htmlFor='form1Example13'
-          >
-            Account
-          </label>
-          <input
+        <FloatingLabel label='Account'>
+          <Form.Control
             ref={refEmail}
-            type='text'
-            id='form1Example13'
-            className='form-control form-control-lg'
-            // name='email'
-            // value={formik.values.email}
-            // onChange={formik.handleChange}
+            placeholder='Account'
             {...formik.getFieldProps('email')}
           />
-          {formik.errors.email && <p className='mt-1 text-danger'>{formik.errors.email}</p>}
-        </div>
+          <Form.Text className='mb-3 text-danger'>{formik.errors.email}</Form.Text>
+        </FloatingLabel>
 
-        <div className='form-outline mb-4'>
-          <label
-            className='form-label'
-            htmlFor='form1Example23'
-          >
-            Password
-          </label>
-          <input
+        <FloatingLabel label='Password'>
+          <Form.Control
             ref={refPass}
             type='password'
-            id='form1Example23'
-            className='form-control form-control-lg'
-            // name='password'
-            // value={formik.values.password}
-            // onChange={formik.handleChange}
+            autoComplete='on'
+            placeholder='Password'
             {...formik.getFieldProps('password')}
           />
-          {formik.errors.password && <p className='mt-1 text-danger'>{formik.errors.password}</p>}
-        </div>
+          <Form.Text className='mb-3 text-danger'>{formik.errors.password}</Form.Text>
+        </FloatingLabel>
 
-        <button className='btn btn-primary btn-lg btn-block'>Sign in</button>
-      </form>
+        <Button
+          type='submit'
+          className='btn-lg btn-block'
+        >
+          Sign in
+        </Button>
+      </Form>
     </>
   );
 }

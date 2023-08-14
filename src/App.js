@@ -8,6 +8,7 @@ import User from './components/user/User';
 import PageNotFound from './components/user/pages/PageNotFound';
 import Admin from './components/admin/Admin';
 import Login from './components/admin/pages/Login';
+import Loading from './components/Loading';
 import { routes, adminRoutes } from './router/router';
 import { AppContext } from './context/contextApp';
 import axiosInstent, { pathApi } from './config/axiosCustom';
@@ -72,6 +73,7 @@ function App() {
           element={<Login />}
         />
       </Routes>
+      <Loading />
     </>
   );
 }

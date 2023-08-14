@@ -7,6 +7,7 @@ import axiosInstent, { pathApi } from '../../../config/axiosCustom';
 import { AppContext } from '../../../context/contextApp';
 import { handleAddProductToCart } from '../../../common/properties';
 import CardBook from './CardBook';
+import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 
 export default function Home() {
   const [idDanhMuc, setIdDanhMuc] = useState(undefined);
@@ -57,15 +58,16 @@ export default function Home() {
     ) : (
       books.map((book) => {
         return (
-          <div
-            className='col-md-3 mb-4'
+          <Col
+            md={3}
+            className='mb-4'
             key={book.bookId}
           >
             <CardBook
               book={book}
               handleAddCart={handleAddCart}
             />
-          </div>
+          </Col>
         );
       })
     );
@@ -168,38 +170,30 @@ export default function Home() {
       </section>
 
       <section className='bg-light'>
-        <div className='container py-5'>
-          <div className='row text-center py-3'>
-            <div className='col-lg-9 m-auto'>
-              <h1 className='h1'>Danh sách các sản phẩm</h1>
-              <select
-                className='form-select mx-auto my-3'
-                style={{ width: '300px' }}
+        <Container className='py-5'>
+          <h1 className='text-center h1'>Danh sách các sản phẩm</h1>
+          <Row className='text-center py-5'>
+            <Col md={3}>
+              <Form.Select
                 onChange={handleSelect}
                 value={idDanhMuc} // Giá trị idDanhMuc hiện tại để chọn mặc định
               >
                 {renderOptions()}
-              </select>
-              <div className='d-flex justify-content-center mb-4'>
-                <input
-                  className='form-control'
-                  type='text'
-                  style={{ width: '500px' }}
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder='Nhập từ khoá tìm kiếm ...'
-                />
-                <button
-                  className='btn btn-info ml-2'
-                  onClick={handleSearch}
-                >
-                  Tìm kiếm
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className='row'>{renderBook()}</div>
-        </div>
+              </Form.Select>
+            </Col>
+            <Col md={7}>
+              <Form.Control
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder='Nhập từ khoá tìm kiếm ...'
+              />
+            </Col>
+            <Col md={2}>
+              <Button onClick={handleSearch}>Tìm kiếm</Button>
+            </Col>
+          </Row>
+          <Row>{renderBook()}</Row>
+        </Container>
       </section>
     </>
   );

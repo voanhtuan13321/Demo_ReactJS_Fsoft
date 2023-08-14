@@ -4,8 +4,11 @@ import Swal from 'sweetalert2';
 
 import axiosInstent, { pathApi } from '../../../config/axiosCustom';
 import { formatPrice } from '../../../common/properties';
+import { AppContext } from '../../../context/contextApp';
+import { useContext } from 'react';
 
 export default function OrderDetailAdmin() {
+  const { appContextDispatch } = useContext(AppContext);
   const navigate = useNavigate();
   const { id } = useParams();
   const [orderDetails, setOrderDetails] = useState([]);
@@ -29,10 +32,12 @@ export default function OrderDetailAdmin() {
 
   // call api
   const getAllOrderDetailFromApi = async (idOrder) => {
+    appContextDispatch({ type: 'SET_LOADING', data: true });
     const response = await axiosInstent.get(`${pathApi.orderDetail}/${idOrder}`);
     const data = await response.data;
     // console.log(data);
     setOrderDetails(data);
+    appContextDispatch({ type: 'SET_LOADING', data: false });
   };
 
   // render order details
@@ -91,9 +96,11 @@ export default function OrderDetailAdmin() {
 
   // handle click confirm
   const handleConfirmClick = async () => {
+    appContextDispatch({ type: 'SET_LOADING', data: true });
     const orderId = orderDetails[0]?.order.id;
     // console.log(orderId);
     await axiosInstent.put(`${pathApi.order}/confirm/${orderId}`);
+    appContextDispatch({ type: 'SET_LOADING', data: false });
     navigate('/admin/order-list');
   };
 

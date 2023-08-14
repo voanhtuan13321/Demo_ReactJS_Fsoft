@@ -52,7 +52,7 @@ export default function BookList() {
     },
   });
   const navigate = useNavigate();
-  const { appContext } = useContext(AppContext);
+  const { appContextDispatch } = useContext(AppContext);
 
   useEffect(() => {
     const idAdmin = window.localStorage.getItem('idAdmin');
@@ -65,18 +65,10 @@ export default function BookList() {
     window.document.title = 'Book List';
     window.scrollTo(0, 0);
 
-    axiosInstent
-      .get(pathApi.categories)
-      .then((response) => {
-        // console.log('category:', response.data);
-        setCategories(response.data);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-
+    callApiGetAllCategory();
     callApiGetAllBooks();
-  }, [appContext, navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleShowModal = () => {
     setShowModal(true);
@@ -95,10 +87,25 @@ export default function BookList() {
 
   // call Api Get All Books
   const callApiGetAllBooks = async () => {
+    appContextDispatch({ type: 'SET_LOADING', data: true });
     const response = await axiosInstent.get(pathApi.products);
     const dataBook = await response.data;
     // console.log('books:', dataBook);
     setBooks(dataBook);
+    appContextDispatch({ type: 'SET_LOADING', data: false });
+  };
+
+  // call api get all categories
+  const callApiGetAllCategory = async () => {
+    appContextDispatch({ type: 'SET_LOADING', data: true });
+    try {
+      const response = await axiosInstent.get(pathApi.categories);
+      const data = await response.data;
+      setCategories(data);
+    } catch (error) {
+      console.error(error);
+    }
+    appContextDispatch({ type: 'SET_LOADING', data: false });
   };
 
   // render options

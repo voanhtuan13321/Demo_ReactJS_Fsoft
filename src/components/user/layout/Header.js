@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { text, link } from '../../../common/properties';
 import { path } from '../../../router/router';
 import { AppContext } from '../../../context/contextApp';
+import { Dropdown } from 'react-bootstrap';
 
 export default function Header() {
   const { appContext, appContextDispatch } = useContext(AppContext);
@@ -136,38 +137,32 @@ export default function Header() {
               </Link>
               {idUser && (
                 <>
-                  <button
-                    className='nav-icon position-relative text-decoration-none btn-account'
-                    style={{ border: 'none', backgroundColor: 'transparent' }}
-                  >
-                    <i className='fa fa-fw fa-user text-dark mr-3'></i>
-                    <ul className='shadow box-account'>
-                      <li>
-                        <Link
-                          className='btn'
-                          to={path.info}
-                        >
-                          Profile
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          className='btn'
-                          to={path.order}
-                        >
-                          Order
-                        </Link>
-                      </li>
-                      <li>
-                        <button
-                          className='btn btn-link'
-                          onClick={handlClickLogout}
-                        >
-                          Logout
-                        </button>
-                      </li>
-                    </ul>
-                  </button>
+                  <Dropdown type='up-centered'>
+                    <Dropdown.Toggle style={{ backgroundColor: 'transparent', border: '0' }}>
+                      <i className='fa fa-fw fa-user text-dark mr-3'></i>
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      <Link
+                        className='dropdown-item'
+                        to={path.info}
+                      >
+                        Profile
+                      </Link>
+                      <Link
+                        className='dropdown-item'
+                        to={path.order}
+                      >
+                        Order
+                      </Link>
+                      <p
+                        className='dropdown-item'
+                        style={{ cursor: 'pointer' }}
+                        onClick={handlClickLogout}
+                      >
+                        Logout
+                      </p>
+                    </Dropdown.Menu>
+                  </Dropdown>
                 </>
               )}
             </div>

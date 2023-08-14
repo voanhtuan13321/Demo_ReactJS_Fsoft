@@ -13,6 +13,7 @@ import Order from '../components/user/pages/Order';
 import OrderDetail from '../components/user/pages/OrderDetail';
 import OrderList from '../components/admin/pages/OrderList';
 import OrderDetailAdmin from '../components/admin/pages/OrderDetailAdmin';
+import Statistical from '../components/admin/pages/Statistical';
 
 const path = {
   home: '',
@@ -32,6 +33,7 @@ const adminPath = {
   productsList: 'products',
   orderList: 'order-list',
   orderDetal: 'order-detail/:id',
+  statistical: 'statistical',
 };
 
 const routes = [
@@ -100,6 +102,10 @@ const adminRoutes = [
   {
     path: adminPath.productsList,
     element: <BookList />,
+  },
+  {
+    path: adminPath.statistical,
+    element: <Statistical />,
   },
 ];
 

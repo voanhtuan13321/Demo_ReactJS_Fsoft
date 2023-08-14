@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
 
 import { adminPath } from '../../../router/router';
 
@@ -15,6 +16,10 @@ const navs = [
   {
     to: adminPath.productsList,
     text: 'Products',
+  },
+  {
+    to: adminPath.statistical,
+    text: 'Statistical',
   },
 ];
 
@@ -62,12 +67,23 @@ export default function Navbar() {
 
       <hr className='sidebar-divider' />
       <div className='text-center'>
-        <button
-          className='btn btn-sm btn-danger'
+        <Button
+          className='btn-icon-split btn-danger'
           onClick={handleLogout}
         >
-          Logout
-        </button>
+          <span
+            className='icon'
+            style={{ paddingTop: '8px' }}
+          >
+            <i className='fa-solid fa-right-from-bracket' />
+          </span>
+          <span
+            className='text'
+            style={{ paddingTop: '8px' }}
+          >
+            Logout
+          </span>
+        </Button>
       </div>
     </ul>
   );

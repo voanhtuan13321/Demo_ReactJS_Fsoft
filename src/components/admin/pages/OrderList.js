@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
 import axiosInstent, { pathApi } from '../../../config/axiosCustom';
+import { AppContext } from '../../../context/contextApp';
 
 export default function OrderList() {
+  const { appContextDispatch } = useContext(AppContext);
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [ordersConfirm, setOrdersConfirm] = useState([]);
@@ -29,18 +31,22 @@ export default function OrderList() {
 
   // get all orders by user is not comfirm
   const getAllOrdersNotConfirmFromApi = async () => {
+    appContextDispatch({ type: 'SET_LOADING', data: true });
     const response = await axiosInstent.get(`${pathApi.order}/not-confirm`);
     const data = await response.data;
     // console.log(data);
     setOrders(data);
+    appContextDispatch({ type: 'SET_LOADING', data: false });
   };
 
   // get all orders by user is not comfirm
   const getAllOrdersConfirmFromApi = async () => {
+    appContextDispatch({ type: 'SET_LOADING', data: true });
     const response = await axiosInstent.get(`${pathApi.order}/confirm`);
     const data = await response.data;
     // console.log(data);
     setOrdersConfirm(data);
+    appContextDispatch({ type: 'SET_LOADING', data: false });
   };
 
   // render order not confirmed

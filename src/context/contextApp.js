@@ -7,12 +7,6 @@ const AppContext = createContext();
 const appReducer = (state, action) => {
   const { type, data } = action;
   switch (type) {
-    case 'ADD_ID_ADMIN':
-      return {
-        ...state,
-        idAdmin: data,
-      };
-
     case 'ADD_ID_USER':
       return {
         ...state,
@@ -25,6 +19,12 @@ const appReducer = (state, action) => {
         countCart: data,
       };
 
+    case 'SET_LOADING':
+      return {
+        ...state,
+        loading: data,
+      };
+
     default:
       return state;
   }
@@ -34,11 +34,12 @@ const appReducer = (state, action) => {
 const AppContextProvider = ({ children }) => {
   const [appContext, appContextDispatch] = useReducer(appReducer, {
     idUser: undefined,
-    idAdmin: undefined,
     countCart: 0,
-    isSuccess: false,
+    loading: false,
   });
-  return <AppContext.Provider value={{ appContext, appContextDispatch }}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={{ appContext, appContextDispatch }}>{children}</AppContext.Provider>
+  );
 };
 
 export { AppContext, AppContextProvider };

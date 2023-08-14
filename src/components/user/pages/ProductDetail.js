@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { Button, Container, Form, Row } from 'react-bootstrap';
 
 import { formatPrice, handleAddProductToCart } from '../../../common/properties';
 import { path } from '../../../router/router';
@@ -27,6 +28,7 @@ export default function ProductDetail() {
     try {
       const response = await axiosInstent.get(`${pathApi.products}/${bookId}`);
       const data = await response.data;
+      console.log(data);
       setBook(data);
     } catch (error) {
       console.error(error);
@@ -66,8 +68,8 @@ export default function ProductDetail() {
 
   return (
     <section className='py-5'>
-      <div className='container'>
-        <div className='row gx-5'>
+      <Container>
+        <Row className='gx-5'>
           <aside className='col-lg-6'>
             <div className='border rounded-4 mb-3 d-flex justify-content-center'>
               <img
@@ -82,38 +84,40 @@ export default function ProductDetail() {
             <div className='ps-lg-3'>
               <h4 className='title text-dark h2'>{book.title}</h4>
               <p className='my-4'>{book.description}</p>
-              <div className='row'>
+              <Row>
                 <dt className='col-3'>Tác giả:</dt>
                 <dd className='col-9'>{book.author}</dd>
                 <dt className='col-3'>Giá:</dt>
                 <dd className='col-9'>{formatPrice(book.price)}</dd>
                 <dt className='col-3'>Số lượng:</dt>
                 <dd className='col-9'>
-                  <input
-                    type='text'
+                  <Form.Control
                     value={soLuong}
                     onChange={(e) => {
                       let str = e.target.value;
                       if (str === '') str = 1;
-                      const quantity = Number(str);
+                      let quantity = Number(str);
                       if (!quantity) return;
+                      quantity > book.quantity && (quantity = book.quantity);
                       setSoLuong(quantity);
                     }}
+                    style={{ width: '100px', display: 'inline-block', textAlign: 'center' }}
                   />
+                  <span className='ml-2'>Hiện có: {book.quantity}</span>
                 </dd>
-              </div>
+              </Row>
               <hr />
 
-              <button
-                className='btn btn-success shadow-0 mt-5'
+              <Button
+                className='btn-success shadow-0 mt-5'
                 onClick={() => addCart(book)}
               >
                 <i className='me-1 fa fa-shopping-basket'></i> Thêm vào giỏ hàng
-              </button>
+              </Button>
             </div>
           </main>
-        </div>
-      </div>
+        </Row>
+      </Container>
     </section>
   );
 }

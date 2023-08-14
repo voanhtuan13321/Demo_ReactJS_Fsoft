@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useFormik } from 'formik';
@@ -7,8 +7,10 @@ import { Button } from 'react-bootstrap';
 
 import axiosInstent, { pathApi } from '../../../config/axiosCustom';
 import CategoryModal from '../modal/CategoryModal';
+import { AppContext } from '../../../context/contextApp';
 
 export default function CategoryList() {
+  const { appContextDispatch } = useContext(AppContext);
   const [showModal, setShowModal] = useState(false);
   const [statusModal, setStatusModal] = useState(undefined);
   const [categories, setCategories] = useState([]);
@@ -60,6 +62,7 @@ export default function CategoryList() {
 
   // call api get all categories
   const callApiGetAllCategories = async () => {
+    appContextDispatch({ type: 'SET_LOADING', data: true });
     try {
       const response = await axiosInstent.get(pathApi.categories);
       const categories = await response.data;
@@ -70,6 +73,7 @@ export default function CategoryList() {
       console.error('Status code:', status);
       Swal.fire('Đã có lỗi xảy ra', '', 'error');
     }
+    appContextDispatch({ type: 'SET_LOADING', data: false });
   };
 
   // render the category list
@@ -131,6 +135,7 @@ export default function CategoryList() {
 
   // handle click on add button
   const handleClickAdd = async (dataCategory) => {
+    appContextDispatch({ type: 'SET_LOADING', data: true });
     try {
       const response = await axiosInstent.post(pathApi.categories, dataCategory);
       const result = await response.data;
@@ -147,10 +152,12 @@ export default function CategoryList() {
         Swal.fire('Có lỗi xảy ra', `status code ${status}`, 'error');
       }
     }
+    appContextDispatch({ type: 'SET_LOADING', data: false });
   };
 
   // handle click on edit button
   const handleShowViewEdit = async (id) => {
+    appContextDispatch({ type: 'SET_LOADING', data: true });
     try {
       const response = await axiosInstent.get(`${pathApi.categories}/${id}`);
       const { categoryId, categoryName } = await response.data;
@@ -164,11 +171,13 @@ export default function CategoryList() {
       console.error('status: ' + status);
       Swal.fire('Có lỗi xảy ra', `status code ${status}`, 'error');
     }
+    appContextDispatch({ type: 'SET_LOADING', data: false });
   };
 
   // handle click on edit button
   const handleClickEdit = async (dataCategory) => {
     // console.log('dataCategory', dataCategory);
+    appContextDispatch({ type: 'SET_LOADING', data: true });
     try {
       const response = await axiosInstent.put(pathApi.categories, dataCategory);
       const result = response.data;
@@ -189,11 +198,12 @@ export default function CategoryList() {
         Swal.fire('Đã có lỗi xảy ra', '', 'error');
       }
     }
+    appContextDispatch({ type: 'SET_LOADING', data: false });
   };
 
   // handle click on delete button
-  const handleClickDelete = (id) => {
-    Swal.fire({
+  const handleClickDelete = async (id) => {
+    const result = await Swal.fire({
       title: 'Bạn có chắc muốn xoá?',
       icon: 'error',
       showCancelButton: true,
@@ -201,24 +211,18 @@ export default function CategoryList() {
       showConfirmButton: false,
       cancelButtonText: 'Huỷ',
       denyButtonText: 'Xoá',
-    }).then((result) => {
-      if (result.isDenied) {
-        axiosInstent
-          .delete(`${pathApi.categories}/${id}`)
-          .then((response) => {
-            if (response.data) {
-              Swal.fire({
-                title: 'Xoá thành công',
-                icon: 'success',
-              });
-              callApiGetAllCategories();
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      }
     });
+
+    if (result.isDenied) {
+      appContextDispatch({ type: 'SET_LOADING', data: true });
+      const response = await axiosInstent.delete(`${pathApi.categories}/${id}`);
+      const data = await response.data;
+      if (data) {
+        Swal.fire('Xoá thành công', '', 'success');
+        callApiGetAllCategories();
+      }
+      appContextDispatch({ type: 'SET_LOADING', data: false });
+    }
   };
 
   return (

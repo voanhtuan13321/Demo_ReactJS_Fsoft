@@ -17,10 +17,7 @@ export default function ShoppingCart() {
     const idUser = window.localStorage.getItem('idUser');
     if (!idUser) {
       navigate('../../user/login');
-      Swal.fire({
-        title: 'Bạn phải đăng nhập',
-        icon: 'info',
-      });
+      Swal.fire('Bạn phải đăng nhập', '', 'info');
       return;
     }
 
@@ -177,20 +174,21 @@ export default function ShoppingCart() {
 
     if (paramResponseCode) {
       if (Number(paramResponseCode) === 0) {
-        Swal.fire('Đặt hàng thành công', '', 'success');
-        let id = idUser;
-        if (!id) {
-          id = window.localStorage.getItem('idUser');
-        }
-        axiosInstent.post(`${pathApi.order}/${id}`).then((response) => {
-          if (response.data) {
-            // navigate('/user/shopping-cart');
-            window.location.href = 'http://localhost:3000/user/shopping-cart';
-            // Ngăn người dùng sử dụng nút "Back" trên trình duyệt
-            window.addEventListener('popstate', (event) => {
-              window.history.pushState(null, '', window.location.href);
-            });
+        Swal.fire('Đặt hàng thành công', '', 'success').then(() => {
+          let id = idUser;
+          if (!id) {
+            id = window.localStorage.getItem('idUser');
           }
+          axiosInstent.post(`${pathApi.order}/${id}`).then((response) => {
+            if (response.data) {
+              // navigate('/user/shopping-cart');
+              window.location.href = 'http://localhost:3000/user/shopping-cart';
+              // Ngăn người dùng sử dụng nút "Back" trên trình duyệt
+              window.addEventListener('popstate', (event) => {
+                window.history.pushState(null, '', window.location.href);
+              });
+            }
+          });
         });
       } else if (Number(paramResponseCode) === 24) {
       } else {

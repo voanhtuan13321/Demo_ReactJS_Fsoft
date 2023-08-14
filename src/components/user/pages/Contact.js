@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Container, Row } from 'react-bootstrap';
 
 export default function Contact() {
   useEffect(() => {
@@ -8,23 +9,23 @@ export default function Contact() {
 
   return (
     <>
-      <div
-        className='container-fluid bg-light'
-        style={{ paddingTop: '100px', paddingBottom: '100px' }}
+      <Container
+        fluid
+        className='bg-light py-5'
       >
-        <div className='col-md-6 m-auto text-center'>
+        <div className='m-auto text-center py-5'>
           <h1 className='h1'>Contact Us</h1>
           <p>
             Proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum
             dolor sit amet.
           </p>
         </div>
-      </div>
+      </Container>
 
-      <div className='container py-5'>
-        <div className='row py-5'>
+      <Container>
+        <Row className='py-5'>
           <form className='col-md-9 m-auto'>
-            <div className='row'>
+            <Row>
               <div className='form-group col-md-6 mb-3'>
                 <label htmlFor='inputname'>Name</label>
                 <input
@@ -45,7 +46,7 @@ export default function Contact() {
                   placeholder='Email'
                 />
               </div>
-            </div>
+            </Row>
             <div className='mb-3'>
               <label htmlFor='inputsubject'>Subject</label>
               <input
@@ -66,7 +67,7 @@ export default function Contact() {
                 rows='8'
               ></textarea>
             </div>
-            <div className='row'>
+            <Row>
               <div className='col text-end mt-2'>
                 <button
                   type='submit'
@@ -75,10 +76,10 @@ export default function Contact() {
                   Let's Talk
                 </button>
               </div>
-            </div>
+            </Row>
           </form>
-        </div>
-      </div>
+        </Row>
+      </Container>
     </>
   );
 }
