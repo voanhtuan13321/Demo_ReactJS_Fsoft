@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { Pie, Doughnut, Bar } from 'react-chartjs-2';
-import { useState } from 'react';
 import {
   BarElement,
   Chart,
@@ -13,6 +12,7 @@ import {
 } from 'chart.js';
 
 import axiosInstent, { pathApi } from '../../../config/axiosCustom';
+import { formatPrice } from '../../../common/properties';
 
 Chart.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
@@ -35,6 +35,7 @@ export default function Statistical() {
     labels: [],
     datas: [],
   });
+  const [statisticalByYear, setStatisticalByYear] = useState(0);
   const [monthSelect, setMonthSelect] = useState(0);
   const [yearSelect, setYearSelect] = useState(0);
 
@@ -49,6 +50,7 @@ export default function Statistical() {
     getTopBestSellingFromApi();
     getTopUserByTheMost();
     getStatistical(monthSelect, yearSelect);
+    getStatisticalByYear(yearSelect);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -157,20 +159,29 @@ export default function Statistical() {
     const response = await axiosInstent.get(urlApi);
     const result = await response.data;
     const labels = [];
-    const datas = [];
 
     // console.log(result);
 
-    result.forEach((rs) => {
-      labels.push(rs.date);
-      datas.push(rs.totalPrice);
+    result.forEach((rs, index) => {
+      labels.push(index + 1);
     });
 
     setStatistical({
       ...statistical,
       labels,
-      datas,
+      datas: result,
     });
+  };
+
+  const getStatisticalByYear = async (y) => {
+    const date = new Date();
+    y === 0 && (y = date.getFullYear());
+    const urlApi = `${pathApi.statistical}/year/${y}`;
+    // console.log(m, y, urlApi);
+
+    const response = await axiosInstent.get(urlApi);
+    const result = await response.data;
+    setStatisticalByYear(result);
   };
 
   const sumTotalPrice = () => {
@@ -286,6 +297,7 @@ export default function Statistical() {
                         const year = Number(e.target.value);
                         setYearSelect(year);
                         getStatistical(monthSelect, year);
+                        getStatisticalByYear(year);
                       }}
                     >
                       {renderOption(years)}
@@ -294,8 +306,17 @@ export default function Statistical() {
                   <Form.Group className='my-2'>
                     <Form.Label>Tổng doanh thu tháng:</Form.Label>
                     <Form.Control
+                      className='text-center'
                       readOnly
-                      value={sumTotalPrice()}
+                      value={formatPrice(sumTotalPrice())}
+                    />
+                  </Form.Group>
+                  <Form.Group className='my-2'>
+                    <Form.Label>Tổng doanh thu năm:</Form.Label>
+                    <Form.Control
+                      className='text-center'
+                      readOnly
+                      value={formatPrice(statisticalByYear)}
                     />
                   </Form.Group>
                 </Col>
