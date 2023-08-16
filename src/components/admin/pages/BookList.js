@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Button, Card, Container, Form, Table } from 'react-bootstrap';
+import { Button, Card, Container, Form, Pagination, Row, Table } from 'react-bootstrap';
 
 import axiosInstent, { pathApi } from '../../../config/axiosCustom';
 import BookAdd from '../../admin/modal/BookAdd';
@@ -17,6 +17,10 @@ export default function BookList() {
   const [search, setSearch] = useState('');
   const [categories, setCategories] = useState([]);
   const [books, setBooks] = useState([]);
+  const [pagination, setPagination] = useState({
+    numbers: [],
+    currenPage: 1,
+  });
   const [inputEditBook, setInputEditBook] = useState({
     bookId: 0,
     categoryId: 0,
@@ -65,8 +69,10 @@ export default function BookList() {
     window.document.title = 'Book List';
     window.scrollTo(0, 0);
 
+    setPagination({ ...pagination, currenPage: 1 });
     callApiGetAllCategory();
-    callApiGetAllBooks();
+    getBooksFromApi();
+    getNumberOfPagination();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -85,15 +91,29 @@ export default function BookList() {
     setShowModalEdit(false);
   };
 
-  // call Api Get All Books
-  const callApiGetAllBooks = async () => {
-    appContextDispatch({ type: 'SET_LOADING', data: true });
-    const response = await axiosInstent.get(pathApi.products);
-    const dataBook = await response.data;
-    // console.log('books:', dataBook);
-    setBooks(dataBook);
-    appContextDispatch({ type: 'SET_LOADING', data: false });
+  const getNumberOfPagination = async (search = '', categoryId = 0) => {
+    try {
+      const response = await axiosInstent.get(pathApi.bookPageNum, {
+        params: { search, categoryId },
+      });
+      const data = await response.data;
+      // console.log(data);
+      setPagination({ ...pagination, numbers: data });
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  // call Api Get All Books
+  // const getBooksFromApi = async () => {
+  //   appContextDispatch({ type: 'SET_LOADING', data: true });
+
+  //   const response = await axiosInstent.get(pathApi.products);
+  //   const dataBook = await response.data;
+  //   // console.log('books:', dataBook);
+  //   setBooks(dataBook);
+  //   appContextDispatch({ type: 'SET_LOADING', data: false });
+  // };
 
   // call api get all categories
   const callApiGetAllCategory = async () => {
@@ -132,7 +152,7 @@ export default function BookList() {
     try {
       await axiosInstent.post(pathApi.products, formDataBook);
       Swal.fire('Thêm thành công', '', 'success');
-      callApiGetAllBooks();
+      getBooksFromApi();
       handleCloseModal();
       formik.resetForm();
     } catch (error) {
@@ -167,7 +187,7 @@ export default function BookList() {
     try {
       await axiosInstent.put(pathApi.products, formDataBook);
       Swal.fire('Cập nhật thành công', '', 'success');
-      callApiGetAllBooks();
+      getBooksFromApi();
     } catch (error) {
       console.error(error);
     }
@@ -179,7 +199,7 @@ export default function BookList() {
     try {
       await axiosInstent.delete(`${pathApi.products}/${id}`);
       Swal.fire('Xoá thành công', '', 'success');
-      callApiGetAllBooks();
+      getBooksFromApi();
     } catch (error) {
       console.error(error);
     }
@@ -243,16 +263,17 @@ export default function BookList() {
   // handle select categories
   const handleSelect = (event) => {
     const id = event.target.value;
-    getBooksFromApi(Number(id));
+    getBooksFromApi(Number(id), search);
     setIdDanhMuc(Number(id));
-    setSearch('');
+    // setSearch('');
+    getNumberOfPagination(search, Number(id));
   };
 
-  const getBooksFromApi = async (idCategory, search = '') => {
+  const getBooksFromApi = async (idCategory, search = '', page = 1) => {
     try {
       const response =
         idCategory === 0 || idCategory === undefined
-          ? await axiosInstent.get(pathApi.products, { params: { search } })
+          ? await axiosInstent.get(pathApi.products, { params: { search, page } })
           : await axiosInstent.get(`${pathApi.products}/category/${idCategory}`, {
               params: { search },
             });
@@ -268,6 +289,32 @@ export default function BookList() {
   const handleSearch = () => {
     // console.log(search);
     getBooksFromApi(idDanhMuc, search);
+    getNumberOfPagination(search, idDanhMuc);
+  };
+
+  // render Pagination
+  const renderPagination = () => {
+    if (pagination.numbers.length < 2) {
+      return <></>;
+    }
+
+    return pagination.numbers.map((page, index) => {
+      return (
+        <Pagination.Item
+          key={index}
+          active={pagination.currenPage === page}
+          onClick={() => handleSelectPage(page)}
+        >
+          {page}
+        </Pagination.Item>
+      );
+    });
+  };
+
+  // handle select page
+  const handleSelectPage = (page) => {
+    setPagination({ ...pagination, currenPage: page });
+    getBooksFromApi(0, search, page);
   };
 
   return (
@@ -304,7 +351,14 @@ export default function BookList() {
             className='ml-3'
             style={{ width: '500px' }}
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              const str = e.target.value;
+              setSearch(str);
+              if (!str) {
+                getBooksFromApi(idDanhMuc);
+                getNumberOfPagination('', idDanhMuc);
+              }
+            }}
             placeholder='Nhập từ khoá tìm kiếm ...'
           />
           <Button
@@ -343,6 +397,9 @@ export default function BookList() {
         </Card.Body>
       </div>
 
+      <Row>
+        <Pagination className='justify-content-center'>{renderPagination()}</Pagination>
+      </Row>
       {/* modal add new category */}
       <BookAdd
         show={showModal}

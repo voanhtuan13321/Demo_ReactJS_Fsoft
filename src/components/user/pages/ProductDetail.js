@@ -97,7 +97,7 @@ export default function ProductDetail() {
                       let str = e.target.value;
                       if (str === '') str = 1;
                       let quantity = Number(str);
-                      if (!quantity) return;
+                      if (!quantity || quantity < 0) return;
                       quantity > book.quantity && (quantity = book.quantity);
                       setSoLuong(quantity);
                     }}

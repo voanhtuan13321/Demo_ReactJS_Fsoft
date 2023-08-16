@@ -8,6 +8,7 @@ const pathApi = {
   categories: '/categories',
   products: '/books',
   topGoodPrice: '/books/top-good-price',
+  bookPageNum: '/books/pages-number',
   admin: '/admin',
   user: '/users',
   topUserBuyTheMost: '/users/top-buy-the-most',

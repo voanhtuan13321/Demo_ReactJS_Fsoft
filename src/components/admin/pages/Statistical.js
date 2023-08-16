@@ -159,13 +159,14 @@ export default function Statistical() {
     const response = await axiosInstent.get(urlApi);
     const result = await response.data;
     const labels = [];
-
-    // console.log(result);
+    console.log(response);
+    console.log(result);
 
     result.forEach((rs, index) => {
       labels.push(index + 1);
     });
 
+    console.log(labels);
     setStatistical({
       ...statistical,
       labels,

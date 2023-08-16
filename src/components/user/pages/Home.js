@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { Button, Col, Container, Form, Row } from 'react-bootstrap';
+import { Button, Col, Container, Form, Pagination, Row } from 'react-bootstrap';
 
 import { path } from '../../../router/router';
 import axiosInstent, { pathApi } from '../../../config/axiosCustom';
@@ -14,14 +14,22 @@ export default function Home() {
   const [categories, setCategories] = useState([]);
   const [books, setBooks] = useState([]);
   const [search, setSearch] = useState('');
+  const [pagination, setPagination] = useState({
+    numbers: [],
+    currenPage: 1,
+  });
   const navigate = useNavigate();
   const { appContextDispatch } = useContext(AppContext);
 
   useEffect(() => {
     window.document.title = 'Home';
     window.scrollTo(0, 0);
+
+    setPagination({ ...pagination, currenPage: 1 });
     getCategoriesFromApi();
-    getBooksFromApi(0);
+    getBooksFromApi(0, '', 1);
+    getNumberOfPagination();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // call api get categories
@@ -35,11 +43,11 @@ export default function Home() {
     }
   };
 
-  const getBooksFromApi = async (idCategory, search = '') => {
+  const getBooksFromApi = async (idCategory, search = '', page) => {
     try {
       const response =
         idCategory === 0 || idCategory === undefined
-          ? await axiosInstent.get(pathApi.products, { params: { search } })
+          ? await axiosInstent.get(pathApi.products, { params: { search, page } })
           : await axiosInstent.get(`${pathApi.products}/category/${idCategory}`, {
               params: { search },
             });
@@ -156,6 +164,43 @@ export default function Home() {
   const handleSearch = () => {
     // console.log(search);
     getBooksFromApi(idDanhMuc, search);
+    getNumberOfPagination(search);
+  };
+
+  const getNumberOfPagination = async (search = '') => {
+    try {
+      const response = await axiosInstent.get(pathApi.bookPageNum, { params: { search } });
+      const data = await response.data;
+      // console.log(data);
+      setPagination({ ...pagination, numbers: data });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // render Pagination
+  const renderPagination = () => {
+    if (pagination.numbers.length < 2) {
+      return <></>;
+    }
+
+    return pagination.numbers.map((page, index) => {
+      return (
+        <Pagination.Item
+          key={index}
+          active={pagination.currenPage === page}
+          onClick={() => handleSelectPage(page)}
+        >
+          {page}
+        </Pagination.Item>
+      );
+    });
+  };
+
+  // handle select page
+  const handleSelectPage = (page) => {
+    setPagination({ ...pagination, currenPage: page });
+    getBooksFromApi(0, search, page);
   };
 
   return (
@@ -193,6 +238,9 @@ export default function Home() {
             </Col>
           </Row>
           <Row>{renderBook()}</Row>
+          <Row>
+            <Pagination className='justify-content-center'>{renderPagination()}</Pagination>
+          </Row>
         </Container>
       </section>
     </>
