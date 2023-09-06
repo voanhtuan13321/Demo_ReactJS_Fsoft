@@ -9,6 +9,7 @@ import axiosInstent, { pathApi } from '../../../config/axiosCustom';
 import BookAdd from '../../admin/modal/BookAdd';
 import BookEdit from '../../admin/modal/BookEdit';
 import { AppContext } from '../../../context/contextApp';
+import { formatPrice } from '../../../common/properties';
 
 export default function BookList() {
   const [showModal, setShowModal] = useState(false);
@@ -230,8 +231,8 @@ export default function BookList() {
                 style={{ width: '50px', height: '50px' }}
               />
             </td>
-            <td>{book.price}</td>
-            <td>{book.quantity}</td>
+            <td className='text-end'>{formatPrice(book.price)}</td>
+            <td className='text-center'>{book.quantity}</td>
             <td>
               <Button
                 className='btn-icon-split btn-sm'

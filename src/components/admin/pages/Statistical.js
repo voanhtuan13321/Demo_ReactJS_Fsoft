@@ -1,40 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { Pie, Doughnut, Bar } from 'react-chartjs-2';
+import vi from 'date-fns/locale/vi';
+import DatePicker, { registerLocale } from 'react-datepicker';
 import {
-  BarElement,
-  Chart,
   ArcElement,
-  Tooltip,
-  Legend,
+  BarElement,
   CategoryScale,
+  Chart,
+  Legend,
   LinearScale,
+  Tooltip,
 } from 'chart.js';
 
+import 'react-datepicker/dist/react-datepicker.css';
 import axiosInstent, { pathApi } from '../../../config/axiosCustom';
 import { formatPrice } from '../../../common/properties';
 
 Chart.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
+registerLocale('vi', vi);
 
 export default function Statistical() {
-  const [months, setMonths] = useState([]);
-  const [years, setYears] = useState([]);
-  const [topGoodPrice, setTopGoodPrice] = useState({
-    labels: [],
-    datas: [],
-  });
-  const [topBestSelling, setTopBestSelling] = useState({
-    labels: [],
-    datas: [],
-  });
-  const [topUserBuyTheMost, setTopUserBuyTheMost] = useState({
-    labels: [],
-    datas: [],
-  });
-  const [statistical, setStatistical] = useState({
-    labels: [],
-    datas: [],
-  });
+  const [startDate, setStartDate] = useState(new Date());
+  const [topGoodPrice, setTopGoodPrice] = useState({ labels: [], datas: [] });
+  const [topBestSelling, setTopBestSelling] = useState({ labels: [], datas: [] });
+  const [topUserBuyTheMost, setTopUserBuyTheMost] = useState({ labels: [], datas: [] });
+  const [statistical, setStatistical] = useState({ labels: [], datas: [] });
   const [statisticalByYear, setStatisticalByYear] = useState(0);
   const [monthSelect, setMonthSelect] = useState(0);
   const [yearSelect, setYearSelect] = useState(0);
@@ -43,9 +34,6 @@ export default function Statistical() {
     window.document.title = 'Statistical';
     window.scrollTo(0, 0);
 
-    generatePastMonths();
-    generatePastYears(10);
-
     getTopGoodPriceFromApi();
     getTopBestSellingFromApi();
     getTopUserByTheMost();
@@ -53,47 +41,6 @@ export default function Statistical() {
     getStatisticalByYear(yearSelect);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const renderOption = (data) => {
-    return data.map((d) => {
-      return (
-        <option
-          key={d.value}
-          value={d.value}
-        >
-          {d.text}
-        </option>
-      );
-    });
-  };
-
-  const generatePastMonths = () => {
-    const months = [];
-    for (let i = 0; i < 12; i++) {
-      months.push({
-        value: i + 1,
-        text: `Tháng ${i + 1}`,
-      });
-    }
-    setMonths(months);
-  };
-
-  const generatePastYears = (numYears) => {
-    const date = new Date();
-    const currentYear = date.getFullYear();
-    const years = [];
-
-    for (let i = 0; i < numYears; i++) {
-      const data = currentYear - i;
-      years.push({
-        value: data,
-        text: data,
-      });
-    }
-
-    setYears(years);
-    setMonthSelect(date.getMonth() + 1);
-  };
 
   const getTopGoodPriceFromApi = async () => {
     const response = await axiosInstent.get(pathApi.topGoodPrice);
@@ -106,11 +53,7 @@ export default function Statistical() {
       datas.push(book.price);
     });
 
-    setTopGoodPrice({
-      ...topGoodPrice,
-      labels,
-      datas,
-    });
+    setTopGoodPrice({ ...topGoodPrice, labels, datas });
   };
 
   const getTopBestSellingFromApi = async () => {
@@ -124,11 +67,7 @@ export default function Statistical() {
       datas.push(order.quantity);
     });
 
-    setTopBestSelling({
-      ...topBestSelling,
-      labels,
-      datas,
-    });
+    setTopBestSelling({ ...topBestSelling, labels, datas });
   };
 
   const getTopUserByTheMost = async () => {
@@ -142,11 +81,7 @@ export default function Statistical() {
       datas.push(rs.quantity);
     });
 
-    setTopUserBuyTheMost({
-      ...topUserBuyTheMost,
-      labels,
-      datas,
-    });
+    setTopUserBuyTheMost({ ...topUserBuyTheMost, labels, datas });
   };
 
   const getStatistical = async (m, y) => {
@@ -159,19 +94,15 @@ export default function Statistical() {
     const response = await axiosInstent.get(urlApi);
     const result = await response.data;
     const labels = [];
-    console.log(response);
-    console.log(result);
+    // console.log(response);
+    // console.log(result);
 
     result.forEach((rs, index) => {
       labels.push(index + 1);
     });
 
-    console.log(labels);
-    setStatistical({
-      ...statistical,
-      labels,
-      datas: result,
-    });
+    // console.log(labels);
+    setStatistical({ ...statistical, labels, datas: result });
   };
 
   const getStatisticalByYear = async (y) => {
@@ -187,11 +118,9 @@ export default function Statistical() {
 
   const sumTotalPrice = () => {
     const datas = statistical.datas;
-    if (datas.length > 0) {
-      return datas.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-    } else {
-      return 0;
-    }
+    return datas.length > 0
+      ? datas.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
+      : 0;
   };
 
   return (
@@ -278,31 +207,28 @@ export default function Statistical() {
               <Row>
                 <Col md={2}>
                   <Form.Group className='my-2'>
-                    <Form.Label>Tháng:</Form.Label>
-                    <Form.Select
-                      value={monthSelect}
-                      onChange={(e) => {
-                        const newMonth = Number(e.target.value);
-                        setMonthSelect(newMonth);
-                        getStatistical(newMonth, yearSelect);
-                      }}
-                    >
-                      {renderOption(months)}
-                    </Form.Select>
-                  </Form.Group>
-                  <Form.Group className='my-2'>
-                    <Form.Label>Năm:</Form.Label>
-                    <Form.Select
-                      value={yearSelect}
-                      onChange={(e) => {
-                        const year = Number(e.target.value);
+                    <Form.Label>Chọn mốc thời gian</Form.Label>
+                    <DatePicker
+                      className='custom-date-picker'
+                      selected={startDate}
+                      onChange={(date) => {
+                        console.log(date);
+                        const month = date.getMonth() + 1;
+                        const year = date.getFullYear();
+                        setStartDate(date);
+                        setMonthSelect(month);
+                        getStatistical(month, year);
                         setYearSelect(year);
-                        getStatistical(monthSelect, year);
                         getStatisticalByYear(year);
                       }}
-                    >
-                      {renderOption(years)}
-                    </Form.Select>
+                      showMonthYearPicker
+                      dateFormat='MM/yyyy'
+                      locale='vi'
+                    ></DatePicker>
+                    <i
+                      className='fas fa-calendar-days position-absolute'
+                      style={{ right: '25px', top: '52px' }}
+                    />
                   </Form.Group>
                   <Form.Group className='my-2'>
                     <Form.Label>Tổng doanh thu tháng:</Form.Label>

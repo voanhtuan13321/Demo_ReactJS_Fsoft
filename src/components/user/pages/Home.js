@@ -149,8 +149,8 @@ export default function Home() {
         if (result.isConfirmed) {
           navigate(path.shoppingCart);
         }
+        getProductsInCartFromApi(idUser);
       });
-      getProductsInCartFromApi(idUser);
     } catch (e) {
       Swal.fire({
         title: 'Thêm vào giỏ hàng thất bại',
